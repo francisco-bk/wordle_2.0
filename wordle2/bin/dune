@@ -1,4 +1,3 @@
 (executable
- (public_name wordle2)
  (name main)
- (libraries wordle2))
+ (libraries Game))

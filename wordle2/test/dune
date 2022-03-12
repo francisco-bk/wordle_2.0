@@ -1,2 +1,3 @@
 (test
- (name wordle2))
+ (name wordle2)
+ (libraries Game ounit2))

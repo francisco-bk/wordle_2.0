@@ -1,2 +1,3 @@
 (library
- (name wordle2))
+ (name game)
+ (public_name Game))
