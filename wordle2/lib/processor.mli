@@ -1,31 +1,16 @@
 (** Processing of words in various ways. *)
 
 val format : string -> string
-(** [format s] cleans [s] by lowercasing all letters and removing leading and 
+(** [format s] cleans [s] by capitalizing all letters and removing leading and 
     trailing white spaces. *)
 
-val is_valid : string -> bool
-(** [is_valid s] is [true] if [s] is a word in the local dictionary and
+val are_equal : string -> string -> bool
+(** [are_equal answer guess] is [true] if [answer] represents the same word as
+    [guess] and [false] otherwise. They are the same word if both contain the
+    same sequence of letters in the same order.
+    Requires: [s1] and [s2] contain only lowercase letters with no whitespace.*)
+
+val in_dict : string -> bool
+(** [in_dict s] is [true] if [s] is a word in the local dictionary and
     [false] otherwise. *)
 
-val is_valid_naive : string -> bool
-(** [is_valid s] is [true] if [s] only contains letters of the alphabet and
-    [false] otherwise. *)
-
-val match : string -> string -> bool
-(** [match s1 s2] is [true] if [s1] represents the same word as [s2] and [false]
-    otherwise.*)
-
-val t
-(** [t] is the abstraction of a word as an association list.
-    Key: Letter present in the word.
-    Value: List of indexes in which the character appears in the string.
-    RI: The keys are ordered alphabetically. *)
-
-val char_index : string -> t
-(** [char_index s] formats [s] into [t]. *)
-
-(* TODO: Add more functions that are able to identify whether two words match,
-  and how each character differs.
-  i.e. if a letter is present in a word, if the letter is in the right
-  position. *)
