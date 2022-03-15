@@ -1,3 +1,6 @@
+play:
+	OCAMLRUNPARAM=b dune exec wordle2/bin/main.exe
+
 test:
 	OCAMLRUNPARAM=b dune exec wordle2/test/wordle2.exe
 
