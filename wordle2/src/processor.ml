@@ -34,14 +34,17 @@ let are_equal answer guess = answer = guess
 
 let in_dict dict word = raise (Failure "Unimplemented")
 
-let rec s_to_list str = 
+let rec s_to_list str =
   match str with
     | "" -> []
-    | str -> (String.sub str 0 1) :: (s_to_list (String.sub str 1 ((String.length str)-1)))
+    | str -> 
+      let h = String.sub str 0 1 in
+      h :: (s_to_list (String.sub str 1 ((String.length str)-1)))
 
 let rec find lst element acc : int = 
-  if ((List.nth lst acc) = element) then acc 
-  else find lst element (acc+1)
+  let nth_ele = List.nth lst acc in
+  if nth_ele = element then acc 
+  else find lst element (acc + 1)
 
 let replace lst index rep = 
   List.mapi (fun i x -> if i = index then rep else x) lst

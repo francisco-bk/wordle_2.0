@@ -1,8 +1,18 @@
 open Game
+open processor
+open randpick
+open Load 
+
+let dict = Load.load 5
+(** [dict] currently stores the five letter word dictionary, which is of type
+string list*)
+
+let correct_word = ranpick.pick dict 
+(** [correct_word] is the correct word *)
 
 (** Temporary word processor, to be replaced by functions from src files*)
 let naive_processor = function 
-| "camels" -> true
+| correct_word -> true
 | _ -> false
 
 let print_color_letter c_tuple = match c_tuple with
