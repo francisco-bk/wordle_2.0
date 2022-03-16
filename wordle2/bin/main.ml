@@ -1,19 +1,17 @@
 open Game
-open processor
-open randpick
+open Processor
+open Randpick
 open Load 
 
-let dict = Load.load 5
+let dict = 5 |> load |> dict_lst 
 (** [dict] currently stores the five letter word dictionary, which is of type
 string list*)
 
-let correct_word = ranpick.pick dict 
+let correct_word = pick dict 
 (** [correct_word] is the correct word *)
 
 (** Temporary word processor, to be replaced by functions from src files*)
-let naive_processor = function 
-| correct_word -> true
-| _ -> false
+let naive_processor a = a = correct_word
 
 let print_color_letter c_tuple = match c_tuple with
 | (c, 0) -> print_string c
