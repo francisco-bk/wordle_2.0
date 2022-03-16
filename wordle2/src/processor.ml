@@ -1,15 +1,15 @@
-(** [word_ok s] is [true] if [s] only contains letters of the alphabet and in
-  dictionary [dict]. Otherwise, is [false]. *)
+(** [word_ok dict s] is [true] if [s] only contains letters of the alphabet and
+    in dictionary [dict]. Otherwise, is [false]. *)
 let word_ok dict s = raise (Failure "Unimplemented")
 
 (** [add_c_to_assoc i c lst] appends index [i] to the list of indices associated
-  with key [c] in association list [lst]. If [c] is not a key in [lst], 
-  a new key-value pair (c, [i]) will be appended to [lst].
-  - The list of indices associated with each key will be sorted in ascending
+    with key [c] in association list [lst]. If [c] is not a key in [lst], 
+    a new key-value pair (c, [i]) will be appended to [lst].
+    - The list of indices associated with each key will be sorted in ascending
     order.
-  - The keys are not guaranteed to be sorted in the returned list.
-  Requires: lst is an association list as with keys and values as defined in
-  [char_index s] with no duplicate entries. *)
+    - The keys are not guaranteed to be sorted in the returned list.
+    Requires: lst is an association list as with keys and values as defined in
+    [char_index s] with no duplicate entries. *)
 let add_c_to_assoc c i lst = match List.assoc_opt c lst with
 | None -> (c, [i]) :: lst
 | Some i_lst -> let clean_lst = List.remove_assoc c lst in
@@ -32,7 +32,7 @@ let format s = s |> String.uppercase_ascii |> String.trim
 
 let are_equal answer guess = answer = guess
 
-let in_dict dict s = raise (Failure "Unimplemented")
+let in_dict dict word = raise (Failure "Unimplemented")
 
 let rec s_to_list str = 
   match str with
@@ -76,4 +76,9 @@ let color_list answer guess : int list =
   let greens = green_list answer guess 0 in
   combine greens
    (yellow_list answer guess greens 0) 
-    guess 0  
+    guess 0 
+
+let colorize_guess answer guess = 
+  let colors = color_list answer guess in
+  let guess_lst = s_to_list guess in
+  List.combine guess_lst colors

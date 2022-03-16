@@ -1,11 +1,27 @@
+open Game
+
 (** Temporary word processor, to be replaced by functions from src files*)
 let naive_processor = function 
 | "camels" -> true
 | _ -> false
 
-let print_history () =
-  print_endline "\nHistory:\n(Currently Unimplemented)"
+let print_color_letter c_tuple = match c_tuple with
+| (c, 0) -> print_string c
+| (c, 1) -> ANSITerminal.print_string [ ANSITerminal.yellow ] c;
+| (c, 2) -> ANSITerminal.print_string [ ANSITerminal.green ] c;
+| _ -> ()
 
+let rec print_word colored_word = 
+  match colored_word with
+  | [] -> ()
+  | h :: t -> print_color_letter h;
+  print_word t
+
+let print_history guess =
+  let colored_guess = Processor.colorize_guess "camels" guess in
+  print_word colored_guess
+
+(** [end_screen ()] represents the state after the game ends. *)
 let end_screen () =
   print_endline "\n\nCongratulations! You have guessed the correct word!";
   print_endline "Score: (To be implemented)"
@@ -13,13 +29,13 @@ let end_screen () =
 (** [play ()] represents the in-game state. *)
 let rec play () =
   print_string "\nEnter your guess: ";
-  let input = read_line () |> naive_processor in
-  match input with
-  | true -> 
-    end_screen ()
+  let input = read_line () in
+  let output = input |> naive_processor in
+  match output with
+  | true -> end_screen ()
   | false ->
     print_endline "\n\nIncorrect!";
-    print_history ();
+    print_history input;
     play ()
 
 (** [start ()] represents the pre-game state. *)
