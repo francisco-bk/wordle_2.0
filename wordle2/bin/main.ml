@@ -37,8 +37,9 @@ let print_history guess =
 
 (** [end_screen ()] represents the state after the game ends. *)
 let end_screen () =
-  print_endline "\n\nCongratulations! You have guessed the correct word!";
-  print_endline "Score: (To be implemented)"
+  print_endline "\nCongratulations! You have guessed the correct word!";
+  print_endline "Score: (To be implemented)";
+  print_endline ""
 
 (** [play ()] represents the in-game state. *)
 let rec play () =
@@ -49,8 +50,9 @@ let rec play () =
   match output with
   | true -> end_screen ()
   | false ->
-    print_endline "\n\nIncorrect!";
+    print_endline "Incorrect!";
     print_history input;
+    print_endline "";
     play () )
   else (print_endline (input^" Is not a valid word");
   play())
