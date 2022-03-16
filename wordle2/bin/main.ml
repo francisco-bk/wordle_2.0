@@ -54,14 +54,13 @@ let rec play () =
     print_history input;
     print_endline "";
     play () )
-  else (print_endline (input^" Is not a valid word");
+  else (print_endline (input^" is not a valid word");
   play())
 
 (** [start ()] represents the pre-game state. *)
     let start () =
   print_endline "Welcome to Wordle 2.0!";
   print_endline "Guess the five-letter word.";
-  print_endline correct_word;
   play()
 
 let () = start ()
