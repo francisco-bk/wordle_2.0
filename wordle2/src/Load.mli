@@ -1,6 +1,6 @@
 (* functions abstractions below *)
 
-val load : int -> string list 
+val load : int -> in_channel
 (** [load length] loads one of the dictionaries from the data folder 
 based on [length] and forms an [in_channel] type which is ready to be read 
 Requires: [length] is of type int that represents the length of the word *)
@@ -12,7 +12,7 @@ Requires: [strings] contains words with the same length , and enclosed
 by "" and separated by , *)
 
 
-val dict_lst : int * in_channel -> string list 
+val dict_lst : in_channel -> string list 
 (** [dict_lst file] transforms [file] into an ocaml stirng list whose 
 elements are individual words *)
 
