@@ -46,19 +46,19 @@ let rec find lst element acc : int =
 let replace lst index rep = 
   List.mapi (fun i x -> if i = index then rep else x) lst
 
-let rec check_green answer guess acc: int list = 
+let rec green_list answer guess acc: int list = 
   match answer, guess with
   | h1 :: t1, h2 :: t2 -> 
-    if (h1 = h2) then (acc :: check_green t1 t2 (acc+1)) 
-    else check_green t1 t2 (acc+1)
+    if (h1 = h2) then (acc :: green_list t1 t2 (acc+1)) 
+    else green_list t1 t2 (acc+1)
   | _ , _ -> []
 
-let rec check_yellow answer guess greens acc : int list = 
+let rec yellow_list answer guess greens acc : int list = 
   match answer with 
   | h :: t -> if (List.mem h guess) && not (List.mem (find guess h 0) greens) 
     then (find guess h 0) :: 
-      (check_yellow t (replace guess (find guess h 0) "#") greens (acc+1))
-    else check_yellow t guess greens (acc+1)
+      (yellow_list t (replace guess (find guess h 0) "#") greens (acc+1))
+    else yellow_list t guess greens (acc+1)
   | _ -> []
 
 let rec combine greens yellows guess acc: int list = 
@@ -70,11 +70,10 @@ let rec combine greens yellows guess acc: int list =
       then 1 :: (combine greens yellows t (acc+1))
       else 0 :: (combine greens yellows t (acc+1))
 
-
-let rec check_green_yellow answer guess : int list = 
+let color_list answer guess : int list = 
   let answer = s_to_list answer in
   let guess = s_to_list guess in
-  let greens = check_green answer guess 0 in
+  let greens = green_list answer guess 0 in
   combine greens
-   (check_yellow answer guess greens 0) 
+   (yellow_list answer guess greens 0) 
     guess 0  

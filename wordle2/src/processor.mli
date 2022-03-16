@@ -13,3 +13,11 @@ val are_equal : string -> string -> bool
 val in_dict : string -> int list -> bool
 (** [in_dict s] is [true] if [s] is a word in the local dictionary and
     [false] otherwise. *)
+
+val green_list : string list -> string list -> int -> int list
+
+val yellow_list : string list -> string list -> int list -> int -> int list
+
+val combine : int list -> int list -> string list -> int -> int list
+
+val color_list : string -> string -> int list
