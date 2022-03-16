@@ -12,7 +12,7 @@ val are_equal : string -> string -> bool
     same sequence of letters in the same order.
     Requires: [s1] and [s2] contain only lowercase letters with no whitespace.*)
 
-val in_dict : string -> string list -> bool
+val in_dict : string list-> string  -> bool
 (** [in_dict s] is [true] if [s] is a word in the loaded dictionary and
     [false] otherwise. *)
 
