@@ -10,7 +10,7 @@ string list*)
 let correct_word = pick dict 
 (** [correct_word] is the correct word *)
 
-(** Temporary word processor, to be replaced by functions from src files*)
+(** [naive_processor a] Temporary word processor, to be replaced by functions from src files*)
 let naive_processor a = 
   a = correct_word
 
@@ -26,6 +26,11 @@ let rec print_word colored_word =
   | h :: t -> print_color_letter h;
   print_word t
 
+(** [in_check str] check if the str is a valid word by comparing it to dict*)
+let in_check str :bool=
+  in_dict dict str 
+
+
 let print_history guess =
   let colored_guess = Processor.colorize_guess correct_word guess in
   print_word colored_guess
@@ -39,13 +44,16 @@ let end_screen () =
 let rec play () =
   print_string "\nEnter your guess: ";
   let input = read_line () in
+  if (in_check input) then (
   let output = input |> naive_processor in
   match output with
   | true -> end_screen ()
   | false ->
     print_endline "\n\nIncorrect!";
     print_history input;
-    play ()
+    play () )
+  else (print_endline (input^" Is not a valid word");
+  play())
 
 (** [start ()] represents the pre-game state. *)
     let start () =
