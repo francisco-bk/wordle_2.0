@@ -7,6 +7,7 @@ let print_history () =
   print_endline "\nHistory:\n(Currently Unimplemented)"
 
 let end_screen () =
+  print_endline "\n\nCongratulations! You have guessed the correct word!";
   print_endline "Score: (To be implemented)"
 
 (** [play ()] represents the in-game state. *)
@@ -15,7 +16,6 @@ let rec play () =
   let input = read_line () |> naive_processor in
   match input with
   | true -> 
-    print_endline "\n\nCongratulations! You have guessed the correct word!";
     end_screen ()
   | false ->
     print_endline "\n\nIncorrect!";

@@ -7,3 +7,6 @@ test:
 zip:
 	rm -f wordle2.zip
 	zip -r wordle2.zip . -x@exclude.lst
+	
+utop:
+	OCAMLRUNPARAM=b dune utop wordle2/src
