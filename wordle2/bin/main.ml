@@ -11,7 +11,8 @@ let correct_word = pick dict
 (** [correct_word] is the correct word *)
 
 (** Temporary word processor, to be replaced by functions from src files*)
-let naive_processor a = a = correct_word
+let naive_processor a = 
+  a = correct_word
 
 let print_color_letter c_tuple = match c_tuple with
 | (c, 0) -> print_string c
@@ -26,7 +27,7 @@ let rec print_word colored_word =
   print_word t
 
 let print_history guess =
-  let colored_guess = Processor.colorize_guess "camels" guess in
+  let colored_guess = Processor.colorize_guess correct_word guess in
   print_word colored_guess
 
 (** [end_screen ()] represents the state after the game ends. *)
@@ -50,6 +51,7 @@ let rec play () =
     let start () =
   print_endline "Welcome to Wordle 2.0!";
   print_endline "Guess the five-letter word.";
+  print_endline correct_word;
   play()
 
 let () = start ()
