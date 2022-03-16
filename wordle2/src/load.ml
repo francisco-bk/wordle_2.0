@@ -4,8 +4,8 @@ and assembles it into an ocaml format *)
 
 
 let load (length:int): in_channel = 
-  if length = 5 then open_in "5 letter words"
-  else open_in "5 letter words"
+  if length = 5 then open_in "wordle2/data/5 letter words"
+  else open_in "wordle2/data/5 letter words"
   
   (* else if length = 4 then 
   else if length = 6 then open_in ""
