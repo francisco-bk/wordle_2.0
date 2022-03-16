@@ -32,7 +32,9 @@ let format s = s |> String.uppercase_ascii |> String.trim
 
 let are_equal answer guess = answer = guess
 
-let in_dict dict word = raise (Failure "Unimplemented")
+let in_dict (dict:string list) (word:string) : bool = 
+  let whats_left = dict |> List.filter (fun x -> x = word) in
+    whats_left <> []
 
 let rec s_to_list str =
   match str with

@@ -12,8 +12,8 @@ val are_equal : string -> string -> bool
     same sequence of letters in the same order.
     Requires: [s1] and [s2] contain only lowercase letters with no whitespace.*)
 
-val in_dict : string -> int list -> bool
-(** [in_dict s] is [true] if [s] is a word in the local dictionary and
+val in_dict : string -> string list -> bool
+(** [in_dict s] is [true] if [s] is a word in the loaded dictionary and
     [false] otherwise. *)
 
 val green_list : string list -> string list -> int -> int list
