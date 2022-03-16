@@ -46,6 +46,11 @@ let rec find lst element acc : int =
 let replace lst index rep = 
   List.mapi (fun i x -> if i = index then rep else x) lst
 
+let rec remove_greens guess greens rep: string list = 
+  match greens with
+  | [] -> guess
+  | h :: t -> remove_greens (replace guess h rep) t rep
+
 let rec green_list answer guess acc: int list = 
   match answer, guess with
   | h1 :: t1, h2 :: t2 -> 
@@ -54,8 +59,9 @@ let rec green_list answer guess acc: int list =
   | _ , _ -> []
 
 let rec yellow_list answer guess greens acc : int list = 
+  let guess = remove_greens guess greens "#" in
   match answer with 
-  | h :: t -> if (List.mem h guess) && not (List.mem (find guess h 0) greens) 
+  | h :: t -> if not (List.mem acc greens) && (List.mem h guess) && not (List.mem (find guess h 0) greens) 
     then (find guess h 0) :: 
       (yellow_list t (replace guess (find guess h 0) "#") greens (acc+1))
     else yellow_list t guess greens (acc+1)
