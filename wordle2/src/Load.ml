@@ -14,6 +14,10 @@ let load (length:int): in_channel =
 
   (* Different files for different lengths of words*)
 
+  let str_to_lst (str:string)  : string list = 
+let strings = String.map (fun x -> if x = '"' then ' ' else x) str in
+strings |> String.split_on_char ',' |> List.map (fun x -> String.trim x) 
+
   let dict_lst (file : in_channel) = 
     try  
             flush stdout;             (* write on the underlying device now *)
