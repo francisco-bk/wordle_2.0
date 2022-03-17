@@ -12,7 +12,7 @@ the following:
 4b) Run "opam switch wordle"
 4c) Run "opam install -y utop odoc ounit2 qcheck bisect_ppx menhir ocaml-lsp-server ocamlformat ocamlformat-rpc ANSITerminal dune"
 
-3) In the working directory, type "dune build". Ignore the warnings, they do not
+3) In the working directory (the folder that contains the wordle files, not the folder that contains the entire unzipped wordle folder), type "dune build". Ignore the warnings, they do not
 break the program. This is a WIP after all!
 
 4) Type "make play". Enjoy the game!
