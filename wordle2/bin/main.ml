@@ -64,20 +64,30 @@ let print_history guess =
   print_word colored_guess
 
 (** [end_screen ()] represents the state after the game ends. *)
-let end_screen () =
-  print_endline "\nCongratulations! You have guessed the correct word!";
+let end_screen win () =
+  if win then 
+  (print_endline "\nCongratulations! You have guessed the correct word!";
   print_endline "Score: (To be implemented)";
-  print_endline ""
+  print_endline "") else (print_endline "\nYou didn't guess the word :(";
+    print_endline ("The word was: " ^ correct_word))
+
+let dif = 6
+
+let letters = 5
 
 (** [play ()] represents the in-game state. *)
 let rec play (guesses : ((string*int) list)list) () =
-  make_game 6 5 guesses;
+  make_game dif letters guesses;
   let input = read_line () in
   if (in_check input) then (
   let output = input |> naive_processor in
   match output with
-  | true -> make_game 6 5 (guesses @ [(colorize_guess correct_word input)]); end_screen ()
-  | false -> play (guesses @ [(colorize_guess correct_word input)]) () )
+  | true -> make_game dif letters 
+    (guesses @ [(colorize_guess correct_word input)]); end_screen true ()
+  | false -> if (List.length guesses + 1) = dif then (
+    make_game dif letters (guesses @ [(colorize_guess correct_word input)]);
+    end_screen false ()) 
+    else play (guesses @ [(colorize_guess correct_word input)]) () )
   else (print_endline (input^" is not a valid word");
   play guesses ())
 
@@ -86,5 +96,5 @@ let rec play (guesses : ((string*int) list)list) () =
   print_endline "Welcome to Wordle 2.0!";
   print_endline "Guess the five-letter word.";
   play [] ()
-  
+
 let () = start ()
