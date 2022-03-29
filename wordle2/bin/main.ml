@@ -65,7 +65,7 @@ let rec print_word colored_word =
 
 (** [in_check str] check if the str is a valid word by comparing it to dict*)
 let in_check str :bool=
-  in_dict dict str 
+  in_dict dict str && (str != "i") && (str != "l")
 
 
 let print_history guess =
@@ -88,6 +88,10 @@ let dif = 6
 (** represents the number of letters of the word the user has to guess. Will be
 replaces with implementation based on theselection by user *)
 let letters = 5
+let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the game is to find the secret "^ string_of_int letters ^ " letter word.\n - To add a word into the game, type it into the terminal.\n - If the letter(s) in the word suggested is in the solution, but in the wrong position, it will come out as yellow.\n - If the letter(s) in the word suggested is in the solution, but in the correct position, it will come out as green.\n - If the letter(s) in the word suggested is not in the solution, it will come out as grey.\nThe end goal is to get the secret word in 6 tries or less.\n\nGood Luck!\n\n"
+let leaderboard = "\nLeaderboard:\nTO BE IMPLEMENTED\n\n"
+let gameIL inp = 
+  if inp = "i" then print_string(instructions) else print_string(leaderboard)
 
 (** [play ()] represents the in-game state. *)
 let rec play (guesses : ((string*int) list)list) () =
@@ -102,7 +106,7 @@ let rec play (guesses : ((string*int) list)list) () =
     make_game dif letters (guesses @ [(colorize_guess correct_word input)]);
     end_screen false ()) 
     else play (guesses @ [(colorize_guess correct_word input)]) () )
-  else (print_endline (input^" is not a valid word");
+  else (if (input = "i" || input = "l") then gameIL(input) else  print_endline (input^" is not a valid word");
   play guesses ())
 
 (** [start ()] represents the pre-game state. *)
