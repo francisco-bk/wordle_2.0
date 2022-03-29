@@ -2,6 +2,8 @@
 
     Game history includes: guess history, provided hints, keyboard colorings. *)
 
+type hint
+
 type t
 
-let init_hist : string -> t
+val init_hist : string -> t
