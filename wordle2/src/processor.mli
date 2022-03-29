@@ -16,13 +16,11 @@ val in_dict : string list-> string  -> bool
 (** [in_dict s] is [true] if [s] is a word in the loaded dictionary and
     [false] otherwise. *)
 
-val green_list : string list -> string list -> int -> int list
-
-val yellow_list : string list -> string list -> int list -> int -> int list
-
-val combine : int list -> int list -> string list -> int -> int list
-
 val color_list : string -> string -> int list
+(** [color_list a g] returns an int list representing how to color guess [g]
+based on answer [a]. Returns a list of 0's, 1's and 2's representing gray,
+yellow, and green for the coloring.
+Precondition : both the answer and the guess have the same number of letters*)
 
 val colorize_guess : string -> string -> (string * int) list
 (** [colorize_guess answer guess] returns a representation of how each letter in

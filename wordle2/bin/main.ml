@@ -16,7 +16,6 @@ let print_color_letter c_tuple = match c_tuple with
   | (c, 2) -> ANSITerminal.print_string [ ANSITerminal.green ] c;
   | _ -> ()
     
-
 let rec colored_row column (letters : (string * int) list) : unit =
   if column = 0 then () else match letters with
   | [] -> print_string "|"
@@ -36,17 +35,17 @@ let make_game dif letters guesses : unit =
   print_endline "Wordle 2.0 ( i ) ( l )";
   make_grid dif letters guesses
 
-let dict = 5 |> load |> dict_lst 
+ 
 (** [dict] currently stores the five letter word dictionary, which is of type
 string list*)
+let dict = 5 |> load |> dict_lst
 
-let correct_word = pick dict 
 (** [correct_word] is the correct word *)
+let correct_word = pick dict 
 
 (** [naive_processor a] Temporary word processor, to be replaced by functions from src files*)
 let naive_processor a = 
   a = correct_word
-
 
 let rec print_word colored_word = 
   match colored_word with
@@ -71,8 +70,13 @@ let end_screen win () =
   print_endline "") else (print_endline "\nYou didn't guess the word :(";
     print_endline ("The word was: " ^ correct_word))
 
+(** represents the number of attempts the user has to guess the word. Will be
+replaces with implementation based on the level of difficulty decided by
+the user *)
 let dif = 6
 
+(** represents the number of letters of the word the user has to guess. Will be
+replaces with implementation based on theselection by user *)
 let letters = 5
 
 (** [play ()] represents the in-game state. *)

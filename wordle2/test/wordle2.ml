@@ -30,19 +30,6 @@ let test (name : string) f input expected_output printer cmp : test =
   assert_equal expected_output (f input) ~cmp ~printer
 
 let processor_tests = [
-    (* Testing green_list *)
-    test "Testing green list" 
-      (green_list ["l"; "l"; "a"; "m"; "a"] ["l"; "a"; "m"; "a"; "l"]) 
-      0 [0] (pp_list Int.to_string) ( cmp_list );
-    
-    (* Testing yellow_list *)
-    test "Whole word matches" 
-      (yellow_list ["b"; "a"; "b"; "b"; "b"] ["b"; "b"; "b"; "b"; "b"] [0; 2; 3; 4]) 
-      0 [] (pp_list Int.to_string) ( cmp_list );
-    test "Whole word matches" 
-      (yellow_list ["l"; "l"; "a"; "m"; "a"] ["l"; "a"; "m"; "a"; "l"] [0]) 
-      0 [1; 2; 3; 4] (pp_list Int.to_string) ( cmp_list );
-    
     (* Testing color_list *)
     test "Same letters only 1 green match" 
       (color_list "llama") "lamal"
