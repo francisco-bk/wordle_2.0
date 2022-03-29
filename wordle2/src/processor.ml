@@ -1,6 +1,6 @@
 (** [word_ok dict s] is [true] if [s] only contains letters of the alphabet and
     in dictionary [dict]. Otherwise, is [false]. *)
-let word_ok dict s = raise (Failure "Unimplemented")
+let word_ok dict s = match dict, s with _ -> raise (Failure "Unimplemented")
 
 (** [add_c_to_assoc i c lst] appends index [i] to the list of indices associated
     with key [c] in association list [lst]. If [c] is not a key in [lst], 
