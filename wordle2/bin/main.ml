@@ -21,7 +21,17 @@ let rec colored_row column (letters : (string * int) list) : unit =
   | [] -> print_string "|"
   | h :: t -> print_string "| "; print_color_letter h; print_string " ";
     colored_row column t
-  
+
+let keyboard = [["q"; "w"; "e"; "r"; "t"; "y"; "u"; "i"; "o"; "p"]; 
+  ["a"; "s"; "d"; "f"; "g"; "h"; "j"; "k"; "l"]; 
+  ["z"; "x"; "c"; "v"; "b"; "n"; "m"]]
+
+let rec guess_list guesses = match guesses with 
+| [] -> []
+| h :: t -> h :: guess_list t
+
+let make_keyboard guesses = assert false
+
 let rec make_grid row column (guesses : ((string * int) list) list) : unit = 
   match guesses with 
   | [] -> empty_grid row column
@@ -32,7 +42,7 @@ let rec make_grid row column (guesses : ((string * int) list) list) : unit =
 the guesses so far.
 Precondition : length of guesses is smaller then dif*)
 let make_game dif letters guesses : unit =
-  print_endline "Wordle 2.0 ( i ) ( l )";
+  print_endline "Wordle 2.0 ( i ) ( l ) ( h )";
   make_grid dif letters guesses
 
  
