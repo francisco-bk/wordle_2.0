@@ -121,15 +121,25 @@ let get_rand_ele lst =
   let rand = Random.int (List.length lst) in
   List.nth lst rand
 
-let get_hint id hist = match id with
-| 0 -> 
-  let hint_letter = hist |> unguessed_greys |> get_rand_ele in
-  let hint = { id = 0; letter = hint_letter} in
-  let new_hist = add_hint_to_hist hist hint in
-  (Some hint, new_hist)
-| 1 ->
-  let hint_letter = hist |> unguessed_yellows |> get_rand_ele in
-  let hint = { id = 1; letter = hint_letter} in
-  let new_hist = add_hint_to_hist hist hint in
-  (Some hint, new_hist)
-| _ -> (None, hist)
+let get_hint id hist = try match id with
+  | 0 -> 
+    let hint_letter = hist |> unguessed_greys |> get_rand_ele in
+    let hint = { id = 0; letter = hint_letter} in
+    let new_hist = add_hint_to_hist hist hint in
+    (Some hint, new_hist)
+  | 1 ->
+    let hint_letter = hist |> unguessed_yellows |> get_rand_ele in
+    let hint = { id = 1; letter = hint_letter} in
+    let new_hist = add_hint_to_hist hist hint in
+    (Some hint, new_hist)
+  | _ -> (None, hist)
+with Invalid_argument _ -> (None, hist)
+
+let rec get_hints hints = 
+  match hints with
+  | [] -> []
+  | h :: t -> (h.letter, h.id) :: get_hints t
+
+let get_hint_tup hist = 
+  let hints = hist.hints in
+    get_hints hints

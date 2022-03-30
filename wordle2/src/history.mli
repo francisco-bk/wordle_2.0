@@ -24,3 +24,4 @@ val get_hint : int -> t -> hint option * t
 
 val hint_id : hint -> int
 val hint_letter : hint -> string
+val get_hint_tup : t -> (string * int) list

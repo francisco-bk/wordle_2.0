@@ -3,6 +3,28 @@ open Processor
 open Randpick
 open Load
 
+(** [dict] initializes itself to an empty list as a mutable field *)
+let dict : string list ref = ref []
+
+(** [dict_f length] returns a string list of all words based on the user-input
+[length] *)
+let dict_f (l:int): string list = l |> load |> dict_lst
+
+(** [correct_word] initializes itself to an empty string as a mutable field*)
+let correct_word : string ref = ref ""
+
+(** [length] represents the length of the word. It initializes itself to 0 *)
+let length : int ref = ref 0
+
+(** [difficulty] represents the diffuculty of the game. It initializes itself to 0 *)
+let difficulty : int ref = ref 0
+
+(** [hist] represents the history of the game. It initializes itself to an empty history. *)
+let hist : History.t ref = ref (History.init_hist "")
+
+(** [correctword length] picks the correct word bsaed on [length]*)
+let correctword (length:int) :string =  (pick (dict_f length))
+
 let rec empty_row column : string =
   if column = 0 then "|" else "|   " ^ empty_row (column - 1)
 
@@ -45,8 +67,13 @@ let make_row row guesses =
   let row = List.nth keyboard row in
     make_colored_row row guesses
 
+let add_hints guesses =
+  let hints = History.get_hint_tup !hist in 
+    hints @ guesses
+
 let make_keyboard guesses = 
   let guesses = guess_list guesses in 
+  let guesses = add_hints guesses in
     print_endline ""; (make_row 0 guesses);
     print_endline ""; print_string "  "; (make_row 1 guesses);
     print_endline ""; print_string "      "; (make_row 2 guesses);
@@ -68,28 +95,6 @@ let make_game dif letters guesses : unit =
   make_grid dif letters guesses;
   make_keyboard guesses
 
-(** [dict] initializes itself to an empty list as a mutable field *)
-let dict : string list ref = ref []
-
-(** [dict_f length] returns a string list of all words based on the user-input
-[length] *)
-let dict_f (l:int): string list = l |> load |> dict_lst
-
-(** [correct_word] initializes itself to an empty string as a mutable field*)
-let correct_word : string ref = ref ""
-
-(** [length] represents the length of the word. It initializes itself to 0 *)
-let length : int ref = ref 0
-
-(** [difficulty] represents the diffuculty of the game. It initializes itself to 0 *)
-let difficulty : int ref = ref 0
-
-(** [hist] represents the history of the game. It initializes itself to an empty history. *)
-let hist : History.t ref = ref (History.init_hist "")
-
-(** [correctword length] picks the correct word bsaed on [length]*)
-let correctword (length:int) :string =  (pick (dict_f length))
-
 (** [naive_processor a] Temporary word processor, to be replaced by functions 
 from src files*)
 let naive_processor a = 
@@ -105,7 +110,6 @@ let rec print_word colored_word =
 let in_check str :bool=
   in_dict !dict str && 
     (str != "i") && (str != "l") && (str != "h") && (str != "r")
-
 
 let print_history guess =
   let colored_guess = Processor.colorize_guess !correct_word guess in
@@ -147,7 +151,7 @@ let rec prompt_hint () =
   | "yellow" -> 
     (match History.get_hint 1 !hist with
     | (Some hint, new_hist) -> print_hint hint; hist := new_hist;
-    | (None, _) -> print_endline "There are no more grey letters!"; 
+    | (None, _) -> print_endline "There are no more yellow letters!"; 
       prompt_hint ())
   | "cancel" -> ()
   | _ -> print_endline "Your input is invalid."; prompt_hint ()
