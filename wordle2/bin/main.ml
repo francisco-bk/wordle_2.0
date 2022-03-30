@@ -88,6 +88,9 @@ let length : int ref = ref 0
 (** [difficulty] represents the diffuculty of the game. It initializes itself to 0 *)
 let difficulty : int ref = ref 0
 
+(** [hist] represents the history of the game. It initializes itself to an empty history. *)
+let hist : History.t ref = ref (History.init_hist "")
+
 (** [correctword length] picks the correct word bsaed on [length]*)
 let correctword (length:int) :string =  (Randpick.pick (dict_f length))
 
@@ -119,9 +122,6 @@ let end_screen win () =
   print_endline "Score: (To be implemented)";
   print_endline "") else (print_endline "\nYou didn't guess the word :(";
     print_endline ("The word was: " ^ !correct_word))
-
-
-
 let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the 
   game is to find the secret "^ string_of_int !length ^ " letter word.\n - To 
   add a word into the game, type it into the terminal.\n - If the letter(s) 
@@ -132,24 +132,43 @@ let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the
   out as grey.\nThe end goal is to get the secret word in 6 tries or less.
   \n\nGood Luck!\n\n"
 let leaderboard = "\nLeaderboard:\nTO BE IMPLEMENTED\n\n"
-let hint = "\nHint:\nTO BE IMPLEMENTED\n\n"
+let hint = "Get a (yellow) letter hint, (grey) letter hint, or (cancel)."
 
-let igCommand inp = match inp with
+let print_hint hint =
+  let id = History.hint_id hint in
+  let letter = History.hint_letter hint in
+  if id = 0 then print_endline ("This letter is not in the word: " ^ letter)
+  else print_endline ("This letter is in the word: " ^ letter)
+
+let rec prompt_hint () =
+  print_endline(hint);
+  match read_line () with
+  | "grey" ->
+    (match History.get_hint 0 !hist with
+    | (Some hint, new_hist) -> print_hint hint; hist := new_hist;
+    | (None, _) -> print_endline "There are no more grey letters!"; prompt_hint ())
+  | "yellow" -> 
+    (match History.get_hint 0 !hist with
+    | (Some hint, new_hist) -> print_hint hint; hist := new_hist;
+    | (None, _) -> print_endline "There are no more grey letters!"; prompt_hint ())
+  | "cancel" -> ()
+  | _ -> print_endline "Your input is invalid."; prompt_hint ()
+
+  let igCommand inp = match inp with
 | "i" -> print_string(instructions)
 | "l" -> print_string(leaderboard)
-| "h" -> print_string(hint)
+| "h" -> prompt_hint ()
 | _ -> print_string("")
 
 (** [choose_length ()] prompts the player to choose the length of the word
 they want.*)
-
 let rec choose_length () = 
   print_endline "Please choose a number between 2 and 10, inclusive, to be the length: ";
   print_string "> ";
   let input = int_of_string (read_line()) in
   match input with 
   | x -> if (1 < x) && (x < 11) then (correct_word := correctword x; length := x; 
-  dict := dict_f x) 
+  dict := dict_f x; hist := History.init_hist !correct_word) 
   else (print_endline "This is not a valid number!"; choose_length ())
 
 (** [choose_difficulty ()] prompts the player to choose a difficulty.*)
@@ -163,7 +182,7 @@ which represent the number of attempts.";
   else (print_endline "This is not a valid difficulty!"; choose_difficulty ())
 
 (** [play ()] represents the in-game state. *)
-let rec play (guesses : ((string*int) list)list) dif letters () =
+let rec play (guesses : ((string*int) list)list) dif letters =
   make_game dif letters guesses;
   let input = String.lowercase_ascii (read_line ()) in
   if (in_check input) then (
@@ -172,17 +191,19 @@ let rec play (guesses : ((string*int) list)list) dif letters () =
   | true -> make_game dif letters 
     (guesses @ [(colorize_guess !correct_word input)]); end_screen true ()
     | false -> if (List.length guesses + 1) = dif then (
+      hist := History.add_guess !hist input;
       make_game dif letters (guesses @ [(colorize_guess !correct_word input)]);
       end_screen false ()) 
-      else play (guesses @ [(colorize_guess !correct_word input)]) dif letters () )
+      else
+        play (guesses @ [(colorize_guess !correct_word input)]) dif letters )
     else (if (input = "r") then 
       (ANSITerminal.print_string [ ANSITerminal.Underlined ] 
-      "\n\nStarting New Game\n\n"; correct_word:= correctword letters; 
-      play [] dif letters ()) 
+      "\n\nStarting New Game\n\n"; correct_word := correctword letters; 
+      hist := History.init_hist !correct_word; play [] dif letters) 
     else if (input = "i"  || input = "l" || input = "h") 
-      then igCommand(input) 
+      then igCommand input
         else print_endline (input^" is not a valid word");
-    play guesses dif letters ())
+    play guesses dif letters)
 
 (** [start ()] represents the pre-game state. *)
 let start () =
@@ -192,6 +213,6 @@ let start () =
   match input with 
   | x -> if x = "p" then choose_length () else ();
   choose_difficulty();
-  play [] !difficulty !length ()
+  play [] !difficulty !length
 
 let () = start ()
