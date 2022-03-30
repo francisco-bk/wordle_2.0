@@ -5,10 +5,9 @@ type guessed_word = {
 }
 
 type hint = {
-  (* id: 0, 1, 2 is for grey, yellow, and green letter hint, respectively. *)
+  (* id: 0 and 1 is for grey and yellow letter hint, respectively. *)
   id : int;
   letter : string;
-  position : int; (* -1 if position not provided in hint. *)
 }
 
 (** Representation of the colored keyboard. *)
@@ -43,13 +42,38 @@ let init_hist ans = {
   hints = [];
 }
 
-
 (** [remove_from_unguessed kb l] is [kb] with letter [l] removed from the
     unguessed letters list. *)
 let remove_from_unguessed keyboard letter =
-  let new_unguessed = List.filter (fun l -> l <> letter) keyboard.unguessed_letters in
+  let unguessed = keyboard.unguessed_letters in
+  let new_unguessed = List.filter (fun l -> l <> letter) unguessed in
   { keyboard with unguessed_letters = new_unguessed }
 
+
+(** [update_keyboard_letter kb letter value] is [kb] with [letter] newly
+    associated with the color represented by [val]. *)
+let update_keyboard_letter keyboard letter value =
+  let kb_unguessed = remove_from_unguessed keyboard letter in
+  let greys = keyboard.grey_letters in
+  let yellows = keyboard.yellow_letters in
+  let greens = keyboard.green_letters in
+  match value with
+  | 0 ->
+    if List.exists (fun l -> l = letter) greys then keyboard
+    else let new_grey = letter :: greys in
+      { kb_unguessed with grey_letters = new_grey }
+  | 1 ->
+    if List.exists (fun l -> l = letter) (greens @ yellows) then keyboard
+    else let new_yellow = letter :: yellows in
+      { kb_unguessed with yellow_letters = new_yellow }
+  | 2 ->
+    if List.exists (fun l -> l = letter) greens then keyboard
+    else let new_yellow = List.filter (fun l -> l <> letter) yellows in
+      {
+        kb_unguessed with
+        yellow_letters = new_yellow; green_letters = letter :: greens
+      }
+  | _ -> keyboard
 
 (** [update_keyboard kb color_wd] is [kb] with new colored letters based on
     [color_wd]'s colorings.
@@ -59,46 +83,22 @@ let rec update_keyboard keyboard colorized_guess =
   match colorized_guess with
   | [] -> keyboard
   | (letter, value) :: t ->
-    match value with
-    | 0 ->
-      if List.exists (fun l -> l = letter) keyboard.grey_letters then
-        update_keyboard keyboard t
-      else
-        let kb_unguessed = remove_from_unguessed keyboard letter in
-        let new_grey = letter :: keyboard.grey_letters in
-        let new_keyboard = { kb_unguessed with grey_letters = new_grey } in
-        update_keyboard new_keyboard t
-    | 1 ->
-      if List.exists (fun l -> l = letter) (keyboard.green_letters @ keyboard.yellow_letters) then
-        update_keyboard keyboard t
-      else
-        let kb_unguessed = remove_from_unguessed keyboard letter in
-        let new_yellow = letter :: keyboard.yellow_letters in
-        let new_keyboard = { kb_unguessed with yellow_letters = new_yellow } in
-        update_keyboard new_keyboard t
-    | 2 ->
-      if List.exists (fun l -> l = letter) keyboard.green_letters then
-        update_keyboard keyboard t
-      else
-        let kb_unguessed = remove_from_unguessed keyboard letter in
-        let new_yellow = List.filter (fun l -> l <> letter) keyboard.yellow_letters in
-        let new_green = letter :: keyboard.green_letters in
-        let new_keyboard = { kb_unguessed with yellow_letters = new_yellow; green_letters = new_green } in
-        update_keyboard new_keyboard t
-    | _ -> raise (Failure "Invalid value")
-
+    let keyboard = update_keyboard_letter keyboard letter value in
+    update_keyboard keyboard t
 
 let add_guess hist w = 
   let colors = Processor.color_list hist.answer w in
   let new_guessed_word = { word = w; colorization = colors } in
-  let new_guessed_words = new_guessed_word :: hist.guessed_words in
   let colorized_word = Processor.colorize_guess hist.answer w in
-  let new_keyboard = update_keyboard hist.keyboard colorized_word in
-  { hist with guessed_words = new_guessed_words; keyboard = new_keyboard }
-  
+  {
+    hist with
+    guessed_words = new_guessed_word :: hist.guessed_words;
+    keyboard = update_keyboard hist.keyboard colorized_word
+  }
+
 (** [add_hint_to_hist hist hint] is the history with the keyboard updated with
     [hint]'s information. *)
-  let add_hint_to_hist hist hint = { hist with hints = hint :: hist.hints }
+let add_hint_to_hist hist hint = { hist with hints = hint :: hist.hints }
 (*TODO: Update keyboard with hint*)
 
 (** [unguessed_yellows hist] is the list of yellow unguessed letters in state
@@ -114,29 +114,19 @@ let unguessed_greys hist =
   List.filter (fun l -> not (String.contains hist.answer l.[0])) ungssd
 
 (** [get_rand_ele lst] is a random element from [lst]. *)
-  let get_rand_ele lst =
+let get_rand_ele lst =
   let rand = Random.int (List.length lst) in
   List.nth lst rand
 
-(* id is hint id (see History.hint) *)
 let get_hint id hist = match id with
 | 0 -> 
-  let ungssd = unguessed_greys hist in
-  let hint_letter = get_rand_ele ungssd in
-  let hint = { id = 0; letter = hint_letter; position = -1} in
+  let hint_letter = hist |> unguessed_greys |> get_rand_ele in
+  let hint = { id = 0; letter = hint_letter} in
   let new_hist = add_hint_to_hist hist hint in
   (Some hint, new_hist)
 | 1 ->
-  let ungssd = unguessed_yellows hist in
-  let hint_letter = get_rand_ele ungssd in
-  let hint = { id = 1; letter = hint_letter; position = -1} in
-  let new_hist = add_hint_to_hist hist hint in
-  (Some hint, new_hist)
-| 2 ->
-  let ungssd = unguessed_yellows hist in
-  let hint_letter = get_rand_ele ungssd in
-  let pos = String.index hist.answer hint_letter.[0] in
-  let hint = { id = 2; letter = hint_letter; position = pos} in
+  let hint_letter = hist |> unguessed_yellows |> get_rand_ele in
+  let hint = { id = 1; letter = hint_letter} in
   let new_hist = add_hint_to_hist hist hint in
   (Some hint, new_hist)
 | _ -> (None, hist)
