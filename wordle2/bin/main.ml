@@ -42,7 +42,7 @@ let rec make_grid row column (guesses : ((string * int) list) list) : unit =
 the guesses so far.
 Precondition : length of guesses is smaller then dif*)
 let make_game dif letters guesses : unit =
-  print_endline "Wordle 2.0 ( i ) ( l ) ( h )";
+  print_endline "Wordle 2.0 ( i ) ( l ) ( h ) ( r )";
   make_grid dif letters guesses
 
  
@@ -65,7 +65,7 @@ let rec print_word colored_word =
 
 (** [in_check str] check if the str is a valid word by comparing it to dict*)
 let in_check str :bool=
-  in_dict dict str && (str != "i") && (str != "l") && (str != "h")
+  in_dict dict str && (str != "i") && (str != "l") && (str != "h") && (str != "r") 
 
 
 let print_history guess =
@@ -98,10 +98,11 @@ let igCommand inp = match inp with
 | "h" -> print_string(hint)
 | _ -> print_string("")
 
+
 (** [play ()] represents the in-game state. *)
 let rec play (guesses : ((string*int) list)list) () =
   make_game dif letters guesses;
-  let input = String.lowercase_ascii (read_line ()) in
+  let input = String.lowercase_ascii (read_line ()) in  
   if (in_check input) then (
   let output = input |> naive_processor in
   match output with
@@ -111,7 +112,7 @@ let rec play (guesses : ((string*int) list)list) () =
     make_game dif letters (guesses @ [(colorize_guess correct_word input)]);
     end_screen false ()) 
     else play (guesses @ [(colorize_guess correct_word input)]) () )
-  else (if (input = "i" || input = "l" || input = "h") then igCommand(input) else  print_endline (input^" is not a valid word");
+  else (if (input = "r") then (ANSITerminal.print_string [ ANSITerminal.Underlined ] "\n\nStarting New Game\n\n"; play [] ()) else if (input = "i" || input = "l" || input = "h") then igCommand(input) else  print_endline (input^" is not a valid word");
   play guesses ())
 
 (** [start ()] represents the pre-game state. *)
