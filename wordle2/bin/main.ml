@@ -99,6 +99,7 @@ let rec play (guesses : ((string*int) list)list) () =
 let start () =
   print_endline "Welcome to Wordle 2.0!";
   print_endline "Guess the five-letter word.";
+  print_endline instructions;
   play [] ()
 
 let () = start ()
