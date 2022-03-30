@@ -21,3 +21,6 @@ val get_hint : int -> t -> hint option * t
     [id] and [None] otherwise. [id] is 0 to represent a grey letter hint,
     1 to represent a yellow letter hint, and 2 to represent a green letter
     hint. *)
+
+val hint_id : hint -> int
+val hint_letter : hint -> string

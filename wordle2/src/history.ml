@@ -19,8 +19,6 @@ type keyboard = {
 }
 
 type t = {
-  (* guessed_words RI: the rightmost entry should be the earliest guessed word while the
-     leftmost is the latest. They should be ordered in increasing age. *)  
   answer : string;
   guessed_words : guessed_word list;
   keyboard : keyboard;
@@ -41,6 +39,9 @@ let init_hist ans = {
   guessed_words = [];
   hints = [];
 }
+
+let hint_id hint = hint.id
+let hint_letter hint = hint.letter
 
 (** [remove_from_unguessed kb l] is [kb] with letter [l] removed from the
     unguessed letters list. *)
@@ -98,8 +99,10 @@ let add_guess hist w =
 
 (** [add_hint_to_hist hist hint] is the history with the keyboard updated with
     [hint]'s information. *)
-let add_hint_to_hist hist hint = { hist with hints = hint :: hist.hints }
-(*TODO: Update keyboard with hint*)
+let add_hint_to_hist hist hint = 
+  let pair = (hint.letter, hint.id) in
+  let updated_keyboard = update_keyboard hist.keyboard [ pair ] in
+  { hist with hints = hint :: hist.hints; keyboard = updated_keyboard }
 
 (** [unguessed_yellows hist] is the list of yellow unguessed letters in state
     [hist]. *)
