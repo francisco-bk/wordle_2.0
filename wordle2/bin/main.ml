@@ -8,7 +8,8 @@ let rec empty_row column : string =
 
 let rec empty_grid row column : unit = 
   let e_line = empty_row column in 
-    if row = 0 then () else ((print_endline ("          "^e_line)); empty_grid (row - 1) column)
+    if row = 0 then () else ((print_endline ("          "^e_line)); 
+    empty_grid (row - 1) column)
     
 let print_color_letter c_tuple = match c_tuple with
   | (c, 0) -> print_string c
@@ -34,10 +35,11 @@ let rec guess_list guesses = match guesses with
 let rec make_colored_row row (guesses : (string * int) list) : unit = 
   match row with
   | [] ->  print_string "|"
-  | h :: t -> print_string "| "; (if (List.mem (h, 2) guesses) then print_color_letter (h, 2) else
-    if (List.mem (h, 1) guesses) then print_color_letter (h, 1) else
-      if (List.mem (h, 0) guesses) then print_color_letter (h, 3) 
-      else print_string h); print_string " "; make_colored_row t guesses
+  | h :: t -> print_string "| "; (if (List.mem (h, 2) guesses) then 
+    print_color_letter (h, 2) else
+      if (List.mem (h, 1) guesses) then print_color_letter (h, 1) else
+        if (List.mem (h, 0) guesses) then print_color_letter (h, 3) 
+        else print_string h); print_string " "; make_colored_row t guesses
 
 let make_row row guesses = 
   let row = List.nth keyboard row in
@@ -72,7 +74,8 @@ let dict = 5 |> load |> dict_lst
 (** [correct_word] is the correct word *)
 let correct_word = pick dict 
 
-(** [naive_processor a] Temporary word processor, to be replaced by functions from src files*)
+(** [naive_processor a] Temporary word processor, to be replaced by functions 
+from src files*)
 let naive_processor a = 
   a = correct_word
 
@@ -84,7 +87,8 @@ let rec print_word colored_word =
 
 (** [in_check str] check if the str is a valid word by comparing it to dict*)
 let in_check str :bool=
-  in_dict dict str && (str != "i") && (str != "l") && (str != "h") && (str != "r")
+  in_dict dict str && 
+    (str != "i") && (str != "l") && (str != "h") && (str != "r")
 
 
 let print_history guess =
@@ -108,7 +112,15 @@ let dif = 6
 replaces with implementation based on theselection by user *)
 let letters = 5
 
-let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the game is to find the secret "^ string_of_int letters ^ " letter word.\n - To add a word into the game, type it into the terminal.\n - If the letter(s) in the word suggested is in the solution, but in the wrong position, it will come out as yellow.\n - If the letter(s) in the word suggested is in the solution, but in the correct position, it will come out as green.\n - If the letter(s) in the word suggested is not in the solution, it will come out as grey.\nThe end goal is to get the secret word in 6 tries or less.\n\nGood Luck!\n\n"
+let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the 
+  game is to find the secret "^ string_of_int letters ^ " letter word.\n - To 
+  add a word into the game, type it into the terminal.\n - If the letter(s) 
+  in the word suggested is in the solution, but in the wrong position, it will 
+  come out as yellow.\n - If the letter(s) in the word suggested is in the 
+  solution, but in the correct position, it will come out as green.\n - If 
+  the letter(s) in the word suggested is not in the solution, it will come 
+  out as grey.\nThe end goal is to get the secret word in 6 tries or less.
+  \n\nGood Luck!\n\n"
 let leaderboard = "\nLeaderboard:\nTO BE IMPLEMENTED\n\n"
 let hint = "\nHint:\nTO BE IMPLEMENTED\n\n"
 
@@ -131,7 +143,12 @@ let rec play (guesses : ((string*int) list)list) () =
     make_game dif letters (guesses @ [(colorize_guess correct_word input)]);
     end_screen false ()) 
     else play (guesses @ [(colorize_guess correct_word input)]) () )
-  else (if (input = "r") then (ANSITerminal.print_string [ ANSITerminal.Underlined ] "\n\nStarting New Game\n\n"; play [] ()) else if (input = "i" || input = "l" || input = "h") then igCommand(input) else print_endline (input^" is not a valid word");
+  else (if (input = "r") then 
+    (ANSITerminal.print_string [ ANSITerminal.Underlined ] 
+    "\n\nStarting New Game\n\n"; play [] ()) 
+  else if (input = "i" || input = "l" || input = "h") 
+    then igCommand(input) 
+      else print_endline (input^" is not a valid word");
   play guesses ())
 
 (** [start ()] represents the pre-game state. *)
