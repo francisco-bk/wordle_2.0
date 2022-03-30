@@ -1,3 +1,4 @@
+
 open Game
 open Processor
 open Randpick
@@ -8,14 +9,16 @@ let rec empty_row column : string =
 
 let rec empty_grid row column : unit = 
   let e_line = empty_row column in 
-    if row = 0 then () else ((print_endline e_line); empty_grid (row - 1) column)
+    if row = 0 then () else ((print_endline ("          "^e_line)); 
+    empty_grid (row - 1) column)
     
 let print_color_letter c_tuple = match c_tuple with
   | (c, 0) -> print_string c
   | (c, 1) -> ANSITerminal.print_string [ ANSITerminal.yellow ] c;
   | (c, 2) -> ANSITerminal.print_string [ ANSITerminal.green ] c;
+  | (c, 3) -> ANSITerminal.print_string [ ANSITerminal.red ] c;
   | _ -> ()
-    
+
 let rec colored_row column (letters : (string * int) list) : unit =
   if column = 0 then () else match letters with
   | [] -> print_string "|"
@@ -26,26 +29,46 @@ let keyboard = [["q"; "w"; "e"; "r"; "t"; "y"; "u"; "i"; "o"; "p"];
   ["a"; "s"; "d"; "f"; "g"; "h"; "j"; "k"; "l"]; 
   ["z"; "x"; "c"; "v"; "b"; "n"; "m"]]
 
-let rec guess_list guesses = match guesses with 
+let rec guess_list guesses = match guesses with
 | [] -> []
-| h :: t -> h :: guess_list t
+| h :: t -> h @ guess_list t
 
-let make_keyboard guesses = assert false
+let rec make_colored_row row (guesses : (string * int) list) : unit = 
+  match row with
+  | [] ->  print_string "|"
+  | h :: t -> print_string "| "; (if (List.mem (h, 2) guesses) then 
+    print_color_letter (h, 2) else
+      if (List.mem (h, 1) guesses) then print_color_letter (h, 1) else
+        if (List.mem (h, 0) guesses) then print_color_letter (h, 3) 
+        else print_string h); print_string " "; make_colored_row t guesses
 
-let rec make_grid row column (guesses : ((string * int) list) list) : unit = 
+let make_row row guesses = 
+  let row = List.nth keyboard row in
+    make_colored_row row guesses
+
+let make_keyboard guesses = 
+  let guesses = guess_list guesses in 
+    print_endline ""; (make_row 0 guesses);
+    print_endline ""; print_string "  "; (make_row 1 guesses);
+    print_endline ""; print_string "      "; (make_row 2 guesses);
+    print_endline ""
+
+let rec make_grid row column (guesses : ((string * int) list) list) : unit =  
   match guesses with 
   | [] -> empty_grid row column
-  | h :: t -> colored_row column h; print_endline ""; make_grid (row - 1) column t
+  | h :: t -> print_string "          "; colored_row column h; print_endline "";
+    make_grid (row - 1) column t
 
 (** [make_game d l g] makes a game with [d] rows representing the difficulty,
 [l] letter representing the number of letters, and with [g] guesses representing
 the guesses so far.
 Precondition : length of guesses is smaller then dif*)
 let make_game dif letters guesses : unit =
-  print_endline "Wordle 2.0 ( i ) ( l ) ( h )";
-  make_grid dif letters guesses
-
- (** [dictionary] represents a persistent field that stores all words *)
+  print_endline "    Wordle 2.0 ( i ) ( l ) ( h ) ( r )";
+  make_grid dif letters guesses;
+  make_keyboard guesses
+ 
+(** [dictionary] represents a persistent field that stores all words *)
 let dictionary : string list = Load.load |> Load.dictlst
 
 (** [dict] initializes itself to an empty list as a mutable field *)
@@ -68,7 +91,8 @@ let difficulty : int ref = ref 0
 (** [correctword length] picks the correct word bsaed on [length]*)
 let correctword (length:int) :string =  (Randpick.pick (dict_f length))
 
-(** [naive_processor a] Temporary word processor, to be replaced by functions from src files*)
+(** [naive_processor a] Temporary word processor, to be replaced by functions 
+from src files*)
 let naive_processor a = 
   a = !correct_word
 
@@ -80,7 +104,8 @@ let rec print_word colored_word =
 
 (** [in_check str] check if the str is a valid word by comparing it to dict*)
 let in_check str :bool=
-  in_dict !dict str && (str != "i") && (str != "l") && (str != "h")
+  in_dict !dict str && 
+    (str != "i") && (str != "l") && (str != "h") && (str != "r")
 
 
 let print_history guess =
@@ -95,14 +120,17 @@ let end_screen win () =
   print_endline "") else (print_endline "\nYou didn't guess the word :(";
     print_endline ("The word was: " ^ !correct_word))
 
-(** represents the number of attempts the user has to guess the word. Will be
-replaces with implementation based on the level of difficulty decided by
-the user *)
 
 
-
-
-let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the game is to find the secret "^ (string_of_int !length) ^ " letter word.\n - To add a word into the game, type it into the terminal.\n - If the letter(s) in the word suggested is in the solution, but in the wrong position, it will come out as yellow.\n - If the letter(s) in the word suggested is in the solution, but in the correct position, it will come out as green.\n - If the letter(s) in the word suggested is not in the solution, it will come out as grey.\nThe end goal is to get the secret word in 6 tries or less.\n\nGood Luck!\n\n"
+let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the 
+  game is to find the secret "^ string_of_int !length ^ " letter word.\n - To 
+  add a word into the game, type it into the terminal.\n - If the letter(s) 
+  in the word suggested is in the solution, but in the wrong position, it will 
+  come out as yellow.\n - If the letter(s) in the word suggested is in the 
+  solution, but in the correct position, it will come out as green.\n - If 
+  the letter(s) in the word suggested is not in the solution, it will come 
+  out as grey.\nThe end goal is to get the secret word in 6 tries or less.
+  \n\nGood Luck!\n\n"
 let leaderboard = "\nLeaderboard:\nTO BE IMPLEMENTED\n\n"
 let hint = "\nHint:\nTO BE IMPLEMENTED\n\n"
 
@@ -111,8 +139,6 @@ let igCommand inp = match inp with
 | "l" -> print_string(leaderboard)
 | "h" -> print_string(hint)
 | _ -> print_string("")
-
-
 
 (** [choose_length ()] prompts the player to choose the length of the word
 they want.*)
@@ -136,7 +162,7 @@ which represent the number of attempts.";
   | x -> if (0 < x) && (x < 11) then (difficulty := x) 
   else (print_endline "This is not a valid difficulty!"; choose_difficulty ())
 
-(** [play dif letters ()] represents the in-game state. *)
+(** [play ()] represents the in-game state. *)
 let rec play (guesses : ((string*int) list)list) dif letters () =
   make_game dif letters guesses;
   let input = String.lowercase_ascii (read_line ()) in
@@ -145,15 +171,21 @@ let rec play (guesses : ((string*int) list)list) dif letters () =
   match output with
   | true -> make_game dif letters 
     (guesses @ [(colorize_guess !correct_word input)]); end_screen true ()
-  | false -> if (List.length guesses + 1) = dif then (
-    make_game dif letters (guesses @ [(colorize_guess !correct_word input)]);
-    end_screen false ()) 
-    else play (guesses @ [(colorize_guess !correct_word input)]) dif letters () )
-  else (if (input = "i" || input = "l" || input = "h") then igCommand(input) else  print_endline (input^" is not a valid word");
-  play guesses dif letters ())
+    | false -> if (List.length guesses + 1) = dif then (
+      make_game dif letters (guesses @ [(colorize_guess !correct_word input)]);
+      end_screen false ()) 
+      else play (guesses @ [(colorize_guess !correct_word input)]) dif letters () )
+    else (if (input = "r") then 
+      (ANSITerminal.print_string [ ANSITerminal.Underlined ] 
+      "\n\nStarting New Game\n\n"; correct_word:= correctword letters; 
+      play [] dif letters ()) 
+    else if (input = "i"  || input = "l" || input = "h") 
+      then igCommand(input) 
+        else print_endline (input^" is not a valid word");
+    play guesses dif letters ())
 
 (** [start ()] represents the pre-game state. *)
-    let start () =
+let start () =
   print_endline "Welcome to Wordle 2.0!";
   print_endline "Press 'P' to start!";
   let input = String.lowercase_ascii (read_line ()) in
