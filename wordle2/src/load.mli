@@ -1,18 +1,18 @@
 (* functions abstractions below *)
 
-val load : int -> in_channel
-(** [load length] loads one of the dictionaries from the data folder 
-based on [length] and forms an [in_channel] type which is ready to be read 
-Requires: [length] is of type int that represents the length of the word *)
-
-val str_to_lst : string  -> string list 
-(** [str_to_lst strings] separates all the words contained in [strings] and 
-assemble them into a list 
-Requires: [strings] contains words with the same length , and enclosed 
-by "" and separated by , *)
+val parse_dict : string list -> string list
+(** [parse dict] returns a cleaned list of all the words contained in [dict]*)
 
 
-val dict_lst : in_channel -> string list 
-(** [dict_lst file] transforms [file] into an ocaml stirng list whose 
-elements are individual words *)
+val choose_word_length: int -> string list -> string list
+(** [chooose_word_length dict length] returns a list of all the words of length
+[length] contained in [dict]*)
+
+val load : in_channel
+(** [load] is the alpha dictionary from the data folder *)
+
+val dictlst : in_channel -> string list
+(** [dictlist file] converts [file] into a string list that contains all words*)
+
+
 

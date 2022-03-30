@@ -2,39 +2,26 @@
 and assembles it into an ocaml format *)
 
 
+let parse_dict (dict:string list) : string list= 
+  List.map (fun x -> String.trim x) dict
 
-let load (length:int): in_channel = 
-  if length = 5 then open_in "wordle2/data/5 letter words"
-  else open_in "wordle2/data/5 letter words"
+let choose_word_length (length:int) (dict:string list): string list = 
+  List.filter (fun x -> String.length x = length) dict
+
+let load : in_channel = open_in "wordle2/data/words_alpha.txt"
   
-  (* else if length = 4 then 
-  else if length = 6 then open_in ""
-  else if length = 7 then open_in "" 
-  else *)
 
-  (* Different files for different lengths of words*)
-
-  let str_to_lst (str:string)  : string list = 
-let strings = String.map (fun x -> if x = '"' then ' ' else x) str in
-strings |> String.split_on_char ',' |> List.map (fun x -> String.trim x) 
-
-  let dict_lst (file : in_channel) = 
-    try  
-            flush stdout;             (* write on the underlying device now *)
-            
-            let strings = input_line file in (* read line, discard \n *)
-            (str_to_lst strings)
-        with e ->                     (* some unexpected exception occurs *)
-          close_in_noerr file;          (* emergency closing *)
-          raise e
-
-let str_to_lst (str:string)  : string list = 
-let strings = String.map (fun x -> if x = '"' then ' ' else x) str in
-strings |> String.split_on_char ',' |> List.map (fun x -> String.trim x) 
+let dictlst (file: in_channel) : string list = 
+  let lines = ref [] in
+  try
+    while true; do
+      lines := input_line file :: !lines
+    done; !lines
+  with End_of_file ->
+    close_in file;
+    List.rev !lines 
 
 
-let str_of_char (cha:char) : string =
- String.make 1 cha
 
 
 
@@ -42,5 +29,8 @@ let str_of_char (cha:char) : string =
 
 
 (* To use these in main, do the following:
-[length] |> load |> dict_lst 
+load |> dictlst |> parse_dict |> choose_word_length [length]
 *)
+
+
+
