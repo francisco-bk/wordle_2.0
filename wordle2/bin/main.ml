@@ -165,21 +165,27 @@ they want.*)
 let rec choose_length () = 
   print_endline "Please choose a number between 2 and 10, inclusive, to be the length: ";
   print_string "> ";
-  let input = int_of_string (read_line()) in
+  try
+    let input = int_of_string (read_line()) in
   match input with 
   | x -> if (1 < x) && (x < 11) then (correct_word := correctword x; length := x; 
   dict := dict_f x; hist := History.init_hist !correct_word) 
   else (print_endline "This is not a valid number!"; choose_length ())
+with e -> 
+  (print_endline "This is not a valid number!"; choose_length ())
 
 (** [choose_difficulty ()] prompts the player to choose a difficulty.*)
 let rec choose_difficulty ():unit =
 print_endline "Please choose a difficulty between 1 and 10, 
 which represent the number of attempts.";
   print_string "> ";
+  try 
   let input = int_of_string (read_line()) in
   match input with 
   | x -> if (0 < x) && (x < 11) then (difficulty := x) 
   else (print_endline "This is not a valid difficulty!"; choose_difficulty ())
+with e ->
+  (print_endline "This is not a valid number!"; choose_length ())
 
 (** [play ()] represents the in-game state. *)
 let rec play (guesses : ((string*int) list)list) dif letters =
@@ -208,10 +214,10 @@ let rec play (guesses : ((string*int) list)list) dif letters =
 (** [start ()] represents the pre-game state. *)
 let start () =
   print_endline "Welcome to Wordle 2.0!";
-  print_endline "Press 'P' to start!";
+  print_endline "Press ANY key and ENTER to start!";
   let input = String.lowercase_ascii (read_line ()) in
   match input with 
-  | x -> if x = "p" then choose_length () else ();
+  | x -> choose_length ();
   choose_difficulty();
   play [] !difficulty !length
 
