@@ -24,6 +24,11 @@ let cmp_list lst1 lst2 =
   && List.length lst2 = List.length uniq2
   && uniq1 = uniq2
 
+(** [test name f input ex_output printer cmp] makes a test named [name]
+testing function [f] with input [input] (NOTE: to use multiple inputs,
+put the other inputs with the function like so (f a) b), [ex_output] represents
+the expected output, printer takes the return type of the function to string,
+and [cmp] is the comparator to compare the results*)
 let test (name : string) f input expected_output printer cmp : test =
   name >:: fun _ ->
   (* the [printer] tells OUnit how to convert the output to a string *)
