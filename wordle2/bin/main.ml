@@ -1,4 +1,3 @@
-
 open Game
 open Processor
 open Randpick
