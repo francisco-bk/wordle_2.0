@@ -8,14 +8,15 @@ let rec empty_row column : string =
 
 let rec empty_grid row column : unit = 
   let e_line = empty_row column in 
-    if row = 0 then () else ((print_endline e_line); empty_grid (row - 1) column)
+    if row = 0 then () else ((print_endline ("          "^e_line)); empty_grid (row - 1) column)
     
 let print_color_letter c_tuple = match c_tuple with
   | (c, 0) -> print_string c
   | (c, 1) -> ANSITerminal.print_string [ ANSITerminal.yellow ] c;
   | (c, 2) -> ANSITerminal.print_string [ ANSITerminal.green ] c;
+  | (c, 3) -> ANSITerminal.print_string [ ANSITerminal.red ] c;
   | _ -> ()
-    
+
 let rec colored_row column (letters : (string * int) list) : unit =
   if column = 0 then () else match letters with
   | [] -> print_string "|"
@@ -26,24 +27,43 @@ let keyboard = [["q"; "w"; "e"; "r"; "t"; "y"; "u"; "i"; "o"; "p"];
   ["a"; "s"; "d"; "f"; "g"; "h"; "j"; "k"; "l"]; 
   ["z"; "x"; "c"; "v"; "b"; "n"; "m"]]
 
-let rec guess_list guesses = match guesses with 
+let rec guess_list guesses = match guesses with
 | [] -> []
-| h :: t -> h :: guess_list t
+| h :: t -> h @ guess_list t
 
-let make_keyboard guesses = assert false
+let rec make_colored_row row (guesses : (string * int) list) : unit = 
+  match row with
+  | [] ->  print_string "|"
+  | h :: t -> print_string "| "; (if (List.mem (h, 2) guesses) then print_color_letter (h, 2) else
+    if (List.mem (h, 1) guesses) then print_color_letter (h, 1) else
+      if (List.mem (h, 0) guesses) then print_color_letter (h, 3) 
+      else print_string h); print_string " "; make_colored_row t guesses
+
+let make_row row guesses = 
+  let row = List.nth keyboard row in
+    make_colored_row row guesses
+
+let make_keyboard guesses = 
+  let guesses = guess_list guesses in 
+    print_endline ""; (make_row 0 guesses);
+    print_endline ""; print_string "  "; (make_row 1 guesses);
+    print_endline ""; print_string "      "; (make_row 2 guesses);
+    print_endline ""
 
 let rec make_grid row column (guesses : ((string * int) list) list) : unit = 
   match guesses with 
   | [] -> empty_grid row column
-  | h :: t -> colored_row column h; print_endline ""; make_grid (row - 1) column t
+  | h :: t -> print_string "          "; colored_row column h; print_endline "";
+    make_grid (row - 1) column t
 
 (** [make_game d l g] makes a game with [d] rows representing the difficulty,
 [l] letter representing the number of letters, and with [g] guesses representing
 the guesses so far.
 Precondition : length of guesses is smaller then dif*)
 let make_game dif letters guesses : unit =
-  print_endline "Wordle 2.0 ( i ) ( l ) ( h )";
-  make_grid dif letters guesses
+  print_endline "       Wordle 2.0 ( i ) ( l ) ( h )";
+  make_grid dif letters guesses;
+  make_keyboard guesses
 
  
 (** [dict] currently stores the five letter word dictionary, which is of type
