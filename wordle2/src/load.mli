@@ -8,11 +8,8 @@ val choose_word_length: int -> string list -> string list
 (** [chooose_word_length dict length] returns a list of all the words of length
 [length] contained in [dict]*)
 
-val load : in_channel
+val load : int -> in_channel
 (** [load] is the alpha dictionary from the data folder *)
 
-val dictlst : in_channel -> string list
+val dict_lst : in_channel -> string list
 (** [dictlist file] converts [file] into a string list that contains all words*)
-
-
-

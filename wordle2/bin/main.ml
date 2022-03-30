@@ -8,7 +8,7 @@ let rec empty_row column : string =
 
 let rec empty_grid row column : unit = 
   let e_line = empty_row column in 
-    if row = 0 then () else ((print_endline ("          "^e_line)); 
+    if row = 0 then () else ((print_endline (String.make ((40 - 4*column)/2) ' ' ^ e_line)); 
     empty_grid (row - 1) column)
     
 let print_color_letter c_tuple = match c_tuple with
@@ -55,7 +55,8 @@ let make_keyboard guesses =
 let rec make_grid row column (guesses : ((string * int) list) list) : unit =  
   match guesses with 
   | [] -> empty_grid row column
-  | h :: t -> print_string "          "; colored_row column h; print_endline "";
+  | h :: t -> print_string (String.make ((40 - 4*column)/2) ' '); 
+    colored_row column h; print_endline "";
     make_grid (row - 1) column t
 
 (** [make_game d l g] makes a game with [d] rows representing the difficulty,
@@ -63,20 +64,16 @@ let rec make_grid row column (guesses : ((string * int) list) list) : unit =
 the guesses so far.
 Precondition : length of guesses is smaller then dif*)
 let make_game dif letters guesses : unit =
-  print_endline "    Wordle 2.0 ( i ) ( l ) ( h ) ( r )";
+  print_endline ("    Wordle 2.0 ( i ) ( l ) ( h ) ( r )");
   make_grid dif letters guesses;
   make_keyboard guesses
- 
-(** [dictionary] represents a persistent field that stores all words *)
-let dictionary : string list = Load.load |> Load.dictlst
 
 (** [dict] initializes itself to an empty list as a mutable field *)
 let dict : string list ref = ref []
 
 (** [dict_f length] returns a string list of all words based on the user-input
 [length] *)
-let dict_f (l:int): string list = dictionary |> Load.parse_dict 
-|> Load.choose_word_length l
+let dict_f (l:int): string list = l |> load |> dict_lst
 
 (** [correct_word] initializes itself to an empty string as a mutable field*)
 let correct_word : string ref = ref ""
@@ -91,7 +88,7 @@ let difficulty : int ref = ref 0
 let hist : History.t ref = ref (History.init_hist "")
 
 (** [correctword length] picks the correct word bsaed on [length]*)
-let correctword (length:int) :string =  (Randpick.pick (dict_f length))
+let correctword (length:int) :string =  (pick (dict_f length))
 
 (** [naive_processor a] Temporary word processor, to be replaced by functions 
 from src files*)
@@ -145,11 +142,13 @@ let rec prompt_hint () =
   | "grey" ->
     (match History.get_hint 0 !hist with
     | (Some hint, new_hist) -> print_hint hint; hist := new_hist;
-    | (None, _) -> print_endline "There are no more grey letters!"; prompt_hint ())
+    | (None, _) -> print_endline "There are no more grey letters!";
+      prompt_hint ())
   | "yellow" -> 
     (match History.get_hint 0 !hist with
     | (Some hint, new_hist) -> print_hint hint; hist := new_hist;
-    | (None, _) -> print_endline "There are no more grey letters!"; prompt_hint ())
+    | (None, _) -> print_endline "There are no more grey letters!"; 
+      prompt_hint ())
   | "cancel" -> ()
   | _ -> print_endline "Your input is invalid."; prompt_hint ()
 
@@ -162,16 +161,16 @@ let rec prompt_hint () =
 (** [choose_length ()] prompts the player to choose the length of the word
 they want.*)
 let rec choose_length () = 
-  print_endline "Please choose a number between 2 and 10, inclusive, to be the length: ";
+  print_endline "Please choose a number between 2 and 10, inclusive, to be the 
+    length: ";
   print_string "> ";
   try
-    let input = int_of_string (read_line()) in
-  match input with 
-  | x -> if (1 < x) && (x < 11) then (correct_word := correctword x; length := x; 
-  dict := dict_f x; hist := History.init_hist !correct_word) 
-  else (print_endline "This is not a valid number!"; choose_length ())
-with e -> 
-  (print_endline "This is not a valid number!"; choose_length ())
+    let x = int_of_string (read_line ()) in
+    if (1 < x && x < 11) then (correct_word := correctword x; length := x; 
+      dict := dict_f x; hist := History.init_hist !correct_word) 
+    else (print_endline "This is not a valid number!"; choose_length ())
+  with Failure _ -> 
+    (print_endline "This is not a valid number!"; choose_length ())
 
 (** [choose_difficulty ()] prompts the player to choose a difficulty.*)
 let rec choose_difficulty ():unit =
@@ -179,16 +178,17 @@ print_endline "Please choose a difficulty between 1 and 10,
 which represent the number of attempts.";
   print_string "> ";
   try 
-  let input = int_of_string (read_line()) in
-  match input with 
-  | x -> if (0 < x) && (x < 11) then (difficulty := x) 
-  else (print_endline "This is not a valid difficulty!"; choose_difficulty ())
-with e ->
-  (print_endline "This is not a valid number!"; choose_length ())
+    let x = int_of_string (read_line ()) in
+      if (0 < x) && (x < 11) then (difficulty := x) 
+      else (print_endline "This is not a valid difficulty!"; 
+        choose_difficulty ())
+  with Failure _ ->
+    (print_endline "This is not a valid number!"; choose_length ())
 
 (** [play ()] represents the in-game state. *)
 let rec play (guesses : ((string*int) list)list) dif letters =
   make_game dif letters guesses;
+  print_string "> ";
   let input = String.lowercase_ascii (read_line ()) in
   if (in_check input) then (
   let output = input |> naive_processor in
@@ -212,12 +212,12 @@ let rec play (guesses : ((string*int) list)list) dif letters =
 
 (** [start ()] represents the pre-game state. *)
 let start () =
-  print_endline "Welcome to Wordle 2.0!";
+  print_endline instructions;
   print_endline "Press ANY key and ENTER to start!";
-  let input = String.lowercase_ascii (read_line ()) in
-  match input with 
-  | x -> choose_length ();
-  choose_difficulty();
+  print_string "> ";
+  let _ = String.lowercase_ascii (read_line ()) in
+  choose_length ();
+  choose_difficulty ();
   play [] !difficulty !length
 
 let () = start ()

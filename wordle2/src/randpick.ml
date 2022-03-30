@@ -1,5 +1,3 @@
-
-
 let pick (dict:string list) : string = 
   Random.self_init ();
   let length = List.length dict in 
