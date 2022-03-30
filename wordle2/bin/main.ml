@@ -199,19 +199,26 @@ let rec play (guesses : ((string*int) list)list) dif letters =
   match output with
   | true -> make_game dif letters 
     (guesses @ [(colorize_guess !correct_word input)]); end_screen true ()
-    | false -> if (List.length guesses + 1) = dif then (
+  | false ->
+    if (List.length guesses + 1) = dif
+    then (
       hist := History.add_guess !hist input;
       make_game dif letters (guesses @ [(colorize_guess !correct_word input)]);
       end_screen false ()) 
-      else
-        play (guesses @ [(colorize_guess !correct_word input)]) dif letters )
-    else (if (input = "r") then 
-      (ANSITerminal.print_string [ ANSITerminal.Underlined ] 
-      "\n\nStarting New Game\n\n"; correct_word := correctword letters; 
-      hist := History.init_hist !correct_word; play [] dif letters) 
-    else if (input = "i"  || input = "l" || input = "h") 
-      then igCommand input
-        else print_endline (input^" is not a valid word");
+    else
+      play (guesses @ [(colorize_guess !correct_word input)]) dif letters )
+  else if (input = "r") then (
+    ANSITerminal.print_string [ ANSITerminal.Underlined ] 
+    "\n\nStarting New Game\n\n";
+    correct_word := correctword letters; 
+    hist := History.init_hist !correct_word;
+    play [] dif letters) 
+  else if (input = "i"  || input = "l" || input = "h") 
+  then (
+    igCommand input;
+    play guesses dif letters)
+  else (
+    print_endline (input ^ " is not a valid word");
     play guesses dif letters)
 
 (** [start ()] represents the pre-game state. *)
