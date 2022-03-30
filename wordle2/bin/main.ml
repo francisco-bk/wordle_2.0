@@ -118,14 +118,14 @@ let end_screen win () =
   print_endline "Score: (To be implemented)";
   print_endline "") else (print_endline "\nYou didn't guess the word :(";
     print_endline ("The word was: " ^ !correct_word))
-let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the 
-  game is to find the secret "^ string_of_int !length ^ " letter word.\n - To 
-  add a word into the game, type it into the terminal.\n - If the letter(s) 
-  in the word suggested is in the solution, but in the wrong position, it will 
-  come out as yellow.\n - If the letter(s) in the word suggested is in the 
-  solution, but in the correct position, it will come out as green.\n - If 
-  the letter(s) in the word suggested is not in the solution, it will come 
-  out as grey.\nThe end goal is to get the secret word in 6 tries or less.
+let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the \
+  game is to find the secret "^ string_of_int !length ^ " letter word.\n - To \
+  add a word into the game, type it into the terminal.\n - If the letter(s) \
+  in the word suggested is in the solution, but in the wrong position, it will \
+  come out as yellow.\n - If the letter(s) in the word suggested is in the \
+  solution, but in the correct position, it will come out as green.\n - If \
+  the letter(s) in the word suggested is not in the solution, it will come \
+  out as grey.\nThe end goal is to get the secret word in 6 tries or less.\
   \n\nGood Luck!\n\n"
 let leaderboard = "\nLeaderboard:\nTO BE IMPLEMENTED\n\n"
 let hint = "Get a (yellow) letter hint, (grey) letter hint, or (cancel)."
@@ -145,7 +145,7 @@ let rec prompt_hint () =
     | (None, _) -> print_endline "There are no more grey letters!";
       prompt_hint ())
   | "yellow" -> 
-    (match History.get_hint 0 !hist with
+    (match History.get_hint 1 !hist with
     | (Some hint, new_hist) -> print_hint hint; hist := new_hist;
     | (None, _) -> print_endline "There are no more grey letters!"; 
       prompt_hint ())
@@ -161,8 +161,8 @@ let rec prompt_hint () =
 (** [choose_length ()] prompts the player to choose the length of the word
 they want.*)
 let rec choose_length () = 
-  print_endline "Please choose a number between 2 and 10, inclusive, to be the 
-    length: ";
+  print_endline "Please choose a number between 2 and 10, inclusive, to be the \
+  length: ";
   print_string "> ";
   try
     let x = int_of_string (read_line ()) in
