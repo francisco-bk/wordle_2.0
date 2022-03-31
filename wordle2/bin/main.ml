@@ -200,9 +200,9 @@ let rec play (guesses : ((string*int) list)list) dif letters =
   | true -> make_game dif letters 
     (guesses @ [(colorize_guess !correct_word input)]); end_screen true ()
   | false ->
+    hist := History.add_guess !hist input;
     if (List.length guesses + 1) = dif
     then (
-      hist := History.add_guess !hist input;
       make_game dif letters (guesses @ [(colorize_guess !correct_word input)]);
       end_screen false ()) 
     else
