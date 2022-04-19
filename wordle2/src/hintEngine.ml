@@ -1,16 +1,22 @@
-(** Representation of a guessed word. *)
+(** Representation of a guessed word. [word] is the guessed word, while
+    [colorization] represents the color of each letter in [word].
+    RI: The colorization of the word is a list of 0's, 1's, or 2's of the same
+        length as [word]. *)
 type guessed_word = {
   word : string;
-  colorization : int list (* Colorization of the word as given by Processor.color_list*)
+  colorization : int list
 }
 
+
+(** Representation of a hint. The [id] is [0] if it is a hint for a grey word,
+    and [1] if it is a hint for a yellow word. [letter] is the letter given in
+    the hint. *)
 type hint = {
-  (* id: 0 and 1 is for grey and yellow letter hint, respectively. *)
   id : int;
   letter : string;
 }
 
-(** Representation of the colored keyboard. *)
+(** Representation of the colored keyboard for letters a to z. *)
 type keyboard = {
   unguessed_letters : string list;
   grey_letters : string list;
@@ -18,6 +24,10 @@ type keyboard = {
   green_letters : string list;
 }
 
+(** Representation of the hint engine. [answer] is the correct word for the
+    current wordle game. [guessed_words] are the words that the player
+    has guessed so far. [keyboard] keeps a record of what letters the player
+    has used. [hints] records which hints are given to the player. *)
 type t = {
   answer : string;
   guessed_words : guessed_word list;
@@ -25,6 +35,7 @@ type t = {
   hints : hint list
 }
 
+(** [init_keyboard ()] initializes the keyboard with all unguessed letters. *)
 let init_keyboard () = {
   unguessed_letters = ["a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"; "i"; "j"; "k";
     "l"; "m"; "n"; "o"; "p"; "q"; "r"; "s"; "t"; "u"; "v"; "w"; "x"; "y"; "z"];
@@ -33,7 +44,7 @@ let init_keyboard () = {
   green_letters = [];
 }
 
-let init_hist ans = {
+let init_engine ans = {
   answer = ans;
   keyboard = init_keyboard ();
   guessed_words = [];
@@ -87,59 +98,59 @@ let rec update_keyboard keyboard colorized_guess =
     let keyboard = update_keyboard_letter keyboard letter value in
     update_keyboard keyboard t
 
-let add_guess hist w = 
-  let colors = Processor.color_list hist.answer w in
+let add_guess engine w = 
+  let colors = Processor.color_list engine.answer w in
   let new_guessed_word = { word = w; colorization = colors } in
-  let colorized_word = Processor.colorize_guess hist.answer w in
+  let colorized_word = Processor.colorize_guess engine.answer w in
   {
-    hist with
-    guessed_words = new_guessed_word :: hist.guessed_words;
-    keyboard = update_keyboard hist.keyboard colorized_word
+    engine with
+    guessed_words = new_guessed_word :: engine.guessed_words;
+    keyboard = update_keyboard engine.keyboard colorized_word
   }
 
-(** [add_hint_to_hist hist hint] is the history with the keyboard updated with
-    [hint]'s information. *)
-let add_hint_to_hist hist hint = 
+(** [update_poss_hints engine hint] is the hint engine with the keyboard updated
+    with [hint]'s information. *)
+let update_poss_hints engine hint = 
   let pair = (hint.letter, hint.id) in
-  let updated_keyboard = update_keyboard hist.keyboard [ pair ] in
-  { hist with hints = hint :: hist.hints; keyboard = updated_keyboard }
+  let updated_keyboard = update_keyboard engine.keyboard [ pair ] in
+  { engine with hints = hint :: engine.hints; keyboard = updated_keyboard }
 
-(** [unguessed_yellows hist] is the list of yellow unguessed letters in state
-    [hist]. *)
-let unguessed_yellows hist = 
-  let ungssd = hist.keyboard.unguessed_letters in
-  List.filter (fun l -> String.contains hist.answer l.[0]) ungssd
+(** [unguessed_yellows engine] is the list of yellow unguessed letters in state
+    [engine]. *)
+let unguessed_yellows engine = 
+  let ungssd = engine.keyboard.unguessed_letters in
+  List.filter (fun l -> String.contains engine.answer l.[0]) ungssd
 
-(** [unguessed_greys hist] is the list of grey unguessed letters in state
-    [hist]. *)
-let unguessed_greys hist = 
-  let ungssd = hist.keyboard.unguessed_letters in
-  List.filter (fun l -> not (String.contains hist.answer l.[0])) ungssd
+(** [unguessed_greys engine] is the list of grey unguessed letters in state
+    [engine]. *)
+let unguessed_greys engine = 
+  let ungssd = engine.keyboard.unguessed_letters in
+  List.filter (fun l -> not (String.contains engine.answer l.[0])) ungssd
 
 (** [get_rand_ele lst] is a random element from [lst]. *)
 let get_rand_ele lst =
   let rand = Random.int (List.length lst) in
   List.nth lst rand
 
-let get_hint id hist = try match id with
+let get_hint id engine = try match id with
   | 0 -> 
-    let hint_letter = hist |> unguessed_greys |> get_rand_ele in
+    let hint_letter = engine |> unguessed_greys |> get_rand_ele in
     let hint = { id = 0; letter = hint_letter} in
-    let new_hist = add_hint_to_hist hist hint in
-    (Some hint, new_hist)
+    let new_engine = update_poss_hints engine hint in
+    (Some hint, new_engine)
   | 1 ->
-    let hint_letter = hist |> unguessed_yellows |> get_rand_ele in
+    let hint_letter = engine |> unguessed_yellows |> get_rand_ele in
     let hint = { id = 1; letter = hint_letter} in
-    let new_hist = add_hint_to_hist hist hint in
-    (Some hint, new_hist)
-  | _ -> (None, hist)
-with Invalid_argument _ -> (None, hist)
+    let new_engine = update_poss_hints engine hint in
+    (Some hint, new_engine)
+  | _ -> (None, engine)
+with Invalid_argument _ -> (None, engine)
 
 let rec get_hints hints = 
   match hints with
   | [] -> []
   | h :: t -> (h.letter, h.id) :: get_hints t
 
-let get_hint_tup hist = 
-  let hints = hist.hints in
+let get_hint_tup engine = 
+  let hints = engine.hints in
     get_hints hints

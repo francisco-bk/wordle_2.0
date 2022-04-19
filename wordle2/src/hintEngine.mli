@@ -1,6 +1,4 @@
-(** Represents the history for the current wordle game 
-
-    Game history includes: guess history, provided hints, keyboard colorings. *)
+(** Represents the hint engine for the current wordle board. *)
 
 type hint
 (** Representation of a hint. *)
@@ -8,8 +6,9 @@ type hint
 type t
 (** Representation of game history. *)
 
-val init_hist : string -> t
-(** [init_hist] is the history at the start of the game. *)
+val init_engine : string -> t
+(** [init_engine] initializes the hint engine to represent the start of the
+    game. *)
 
 val add_guess : t -> string -> t
 (** [add_guess w] is the history with guess [w] added.
@@ -23,5 +22,10 @@ val get_hint : int -> t -> hint option * t
     hint. *)
 
 val hint_id : hint -> int
+(** [hint_id h] is the id of hint [h]. [0] represents a hint for a grey letter,
+    and [1] represents a hint for a yellow letter.*)
 val hint_letter : hint -> string
+(** [hint_id h] is the letter given by hint [h]. *)
 val get_hint_tup : t -> (string * int) list
+(** [get_hint_tup eng] is the color representations of all hints stored in
+    [eng]. *)

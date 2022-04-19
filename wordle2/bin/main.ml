@@ -16,11 +16,13 @@ let correct_word : string ref = ref ""
 (** [length] represents the length of the word. It initializes itself to 0 *)
 let length : int ref = ref 0
 
-(** [difficulty] represents the diffuculty of the game. It initializes itself to 0 *)
+(** [difficulty] represents the diffuculty of the game. It initializes itself
+    to 0 *)
 let difficulty : int ref = ref 0
 
-(** [hist] represents the history of the game. It initializes itself to an empty history. *)
-let hist : History.t ref = ref (History.init_hist "")
+(** [hint_engine] represents the hint engine of the game. It initializes itself
+    to a new engine. *)
+let hint_engine : HintEngine.t ref = ref (HintEngine.init_engine "")
 
 (** [correctword length] picks the correct word bsaed on [length]*)
 let correctword (length:int) :string =  (pick (dict_f length))
@@ -68,7 +70,7 @@ let make_row row guesses =
     make_colored_row row guesses
 
 let add_hints guesses =
-  let hints = History.get_hint_tup !hist in 
+  let hints = HintEngine.get_hint_tup !hint_engine in 
     hints @ guesses
 
 let make_keyboard guesses = 
@@ -111,7 +113,7 @@ let in_check str :bool=
   in_dict !dict str && 
     (str != "i") && (str != "l") && (str != "h") && (str != "r")
 
-let print_history guess =
+let print_HintEngine guess =
   let colored_guess = Processor.colorize_guess !correct_word guess in
   print_word colored_guess
 
@@ -135,8 +137,8 @@ let leaderboard = "\nLeaderboard:\nTO BE IMPLEMENTED\n\n"
 let hint = "Get a (yellow) letter hint, (grey) letter hint, or (cancel)."
 
 let print_hint hint =
-  let id = History.hint_id hint in
-  let letter = History.hint_letter hint in
+  let id = HintEngine.hint_id hint in
+  let letter = HintEngine.hint_letter hint in
   if id = 0 then print_endline ("This letter is not in the word: " ^ letter)
   else print_endline ("This letter is in the word: " ^ letter)
 
@@ -144,13 +146,13 @@ let rec prompt_hint () =
   print_endline(hint);
   match read_line () with
   | "grey" ->
-    (match History.get_hint 0 !hist with
-    | (Some hint, new_hist) -> print_hint hint; hist := new_hist;
+    (match HintEngine.get_hint 0 !hint_engine with
+    | (Some hint, new_hist) -> print_hint hint; hint_engine := new_hist;
     | (None, _) -> print_endline "There are no more grey letters!";
       prompt_hint ())
   | "yellow" -> 
-    (match History.get_hint 1 !hist with
-    | (Some hint, new_hist) -> print_hint hint; hist := new_hist;
+    (match HintEngine.get_hint 1 !hint_engine with
+    | (Some hint, new_hist) -> print_hint hint; hint_engine := new_hist;
     | (None, _) -> print_endline "There are no more yellow letters!"; 
       prompt_hint ())
   | "cancel" -> ()
@@ -171,13 +173,13 @@ let rec choose_length () =
   try
     let x = int_of_string (read_line ()) in
     if (1 < x && x < 11) then (correct_word := correctword x; length := x; 
-      dict := dict_f x; hist := History.init_hist !correct_word) 
+      dict := dict_f x; hint_engine := HintEngine.init_engine !correct_word) 
     else (print_endline "This is not a valid number!"; choose_length ())
   with Failure _ -> 
     (print_endline "This is not a valid number!"; choose_length ())
 
 (** [choose_difficulty ()] prompts the player to choose a difficulty.*)
-let rec choose_difficulty ():unit =
+let rec choose_difficulty () =
 print_endline "Please choose a difficulty between 1 and 10, 
 which represent the number of attempts.";
   print_string "> ";
@@ -200,7 +202,7 @@ let rec play (guesses : ((string*int) list)list) dif letters =
   | true -> make_game dif letters 
     (guesses @ [(colorize_guess !correct_word input)]); end_screen true ()
   | false ->
-    hist := History.add_guess !hist input;
+    hint_engine := HintEngine.add_guess !hint_engine input;
     if (List.length guesses + 1) = dif
     then (
       make_game dif letters (guesses @ [(colorize_guess !correct_word input)]);
@@ -211,7 +213,7 @@ let rec play (guesses : ((string*int) list)list) dif letters =
     ANSITerminal.print_string [ ANSITerminal.Underlined ] 
     "\n\nStarting New Game\n\n";
     correct_word := correctword letters; 
-    hist := History.init_hist !correct_word;
+    hint_engine := HintEngine.init_engine !correct_word;
     play [] dif letters) 
   else if (input = "i"  || input = "l" || input = "h") 
   then (
