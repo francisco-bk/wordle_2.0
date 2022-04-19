@@ -24,8 +24,10 @@ val get_hint : int -> t -> hint option * t
 val hint_id : hint -> int
 (** [hint_id h] is the id of hint [h]. [0] represents a hint for a grey letter,
     and [1] represents a hint for a yellow letter.*)
+
 val hint_letter : hint -> string
-(** [hint_id h] is the letter given by hint [h]. *)
+(** [hint_letter h] is the letter given by hint [h]. *)
+
 val get_hint_tup : t -> (string * int) list
 (** [get_hint_tup eng] is the color representations of all hints stored in
     [eng]. *)

@@ -10,3 +10,13 @@ zip:
 	
 utop:
 	OCAMLRUNPARAM=b dune utop wordle2/src
+
+bisect: bisect-clean
+	-dune exec --instrument-with bisect_ppx --force wordle2/test/wordle2.exe
+	bisect-ppx-report html
+
+bisect-clean:
+	rm -rf _coverage bisect*.coverage
+
+doc:
+	dune build @doc

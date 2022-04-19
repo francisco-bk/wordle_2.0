@@ -1,3 +1,5 @@
 _build/*
+_coverage/*
+bisect*.coverage
 .DS_Store
 *.zip
