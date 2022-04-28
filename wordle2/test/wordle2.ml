@@ -1,7 +1,7 @@
 open OUnit2
 open Game
 open Processor
-
+open Load
 (** [pp_list pp_elt lst] pretty-prints list [lst], using [pp_elt] to
   pretty-print each element of [lst]. *)
   let pp_list pp_elt lst =
@@ -58,9 +58,21 @@ let processor_tests = [
       (color_list "helloworld") "ajdhouslof"
       [0; 0; 1; 1; 2; 0; 0; 1; 1; 0] (pp_list Int.to_string) ( = );
 ]
+(*  ***************************************************************************)
 
+let parse_dict_tests = [
+  test "parse empty is empty" (parse_dict) [] [] (pp_list (fun x -> x)) ( = );
+test "parse ['a'] is ['a']" (parse_dict) ["a"] ["a"] (pp_list (fun x -> x)) ( = );
+test "parse [' a '] is ['a']" (parse_dict) [" a "] ["a"] (pp_list (fun x -> x)) ( = );
+test "parse [' a'] is ['a']" (parse_dict) [" a"] ["a"] (pp_list (fun x -> x)) ( = );
+test "parse ['a';'b'] is ['a';'b']" (parse_dict) ["a";"b"] ["a";"b"] (pp_list (fun x -> x)) ( = );
+test "parse ['a';' b '] is ['a';'b']" (parse_dict) ["a";" b "] ["a";"b"] (pp_list (fun x -> x)) ( = );]
+let load_tests = List.flatten [parse_dict_tests;]
+ 
+
+(*  ***************************************************************************)
 let suite =
   "test suite for Wordle 2.0"
-  >::: List.flatten [ processor_tests ]
+  >::: List.flatten [ processor_tests ; load_tests]
 
 let _ = run_test_tt_main suite
