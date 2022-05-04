@@ -7,6 +7,7 @@ let parse_dict (dict:string list) : string list=
 let choose_word_length (length:int) (dict:string list): string list = 
   List.filter (fun x -> String.length x = length) dict
 
+  
 let load (length:int) : in_channel = 
   open_in ("wordle2/data/" ^ (string_of_int length) ^ ".txt")
   

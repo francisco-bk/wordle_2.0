@@ -60,14 +60,27 @@ let processor_tests = [
 ]
 (*  ***************************************************************************)
 
+(* tests for the Load module *)
+let i a = a
 let parse_dict_tests = [
-  test "parse empty is empty" (parse_dict) [] [] (pp_list (fun x -> x)) ( = );
-test "parse ['a'] is ['a']" (parse_dict) ["a"] ["a"] (pp_list (fun x -> x)) ( = );
-test "parse [' a '] is ['a']" (parse_dict) [" a "] ["a"] (pp_list (fun x -> x)) ( = );
-test "parse [' a'] is ['a']" (parse_dict) [" a"] ["a"] (pp_list (fun x -> x)) ( = );
-test "parse ['a';'b'] is ['a';'b']" (parse_dict) ["a";"b"] ["a";"b"] (pp_list (fun x -> x)) ( = );
-test "parse ['a';' b '] is ['a';'b']" (parse_dict) ["a";" b "] ["a";"b"] (pp_list (fun x -> x)) ( = );]
-let load_tests = List.flatten [parse_dict_tests;]
+  test "parse empty is empty" (parse_dict) [] [] (pp_list i) ( = );
+test "parse ['a'] is ['a']" (parse_dict) ["a"] ["a"] (pp_list i) ( = );
+test "parse [' a '] is ['a']" (parse_dict) [" a "] ["a"] (pp_list i) ( = );
+test "parse [' a'] is ['a']" (parse_dict) [" a"] ["a"] (pp_list i) ( = );
+test "parse ['a';'b'] is ['a';'b']" (parse_dict) ["a";"b"] ["a";"b"] (pp_list i) ( = );
+test "parse ['a';' b '] is ['a';'b']" (parse_dict) ["a";" b "] ["a";"b"] (pp_list i) ( = );]
+
+
+let  choose_word_length_tests = [
+  test "choose empty is empty" (choose_word_length 5) [] [] (pp_list i) ( = );
+  test "choose 1 ['a'] is ['a']" (choose_word_length 1) ["a"] ["a"] (pp_list i) ( = );
+  test "choose 1 ['ab'] is []" (choose_word_length 1) ["ab"] [] (pp_list i) ( = );
+  test "choose 2 ['ab'] is ['ab']" (choose_word_length 2) ["ab"] ["ab"] (pp_list i) ( = );
+  test "choose 1 ['a';'ab'] is ['a']" (choose_word_length 1) ["a";"ab"] ["a"] (pp_list i) ( = );
+  test "choose 2 ['a';'ab'] is ['ab']" (choose_word_length 2) ["a";"ab"] ["ab"] (pp_list i) ( = );
+  test "choose 3 ['a';'ab'] is []" (choose_word_length 3) ["a";"ab"] [] (pp_list i) ( = );
+]
+let load_tests = List.flatten [parse_dict_tests;choose_word_length_tests]
  
 
 (*  ***************************************************************************)
