@@ -97,8 +97,7 @@ let make_game dif letters guesses : unit =
   make_grid dif letters guesses;
   make_keyboard guesses
 
-(** [naive_processor a] Temporary word processor, to be replaced by functions 
-from src files*)
+(** [naive_processor a] Temporary word processor *)
 let naive_processor a = 
   a = !correct_word
 

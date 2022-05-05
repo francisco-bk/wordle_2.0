@@ -1,7 +1,5 @@
 (** Processing of words in various ways. *)
 
-val char_index : string -> (char * int list) list
-
 val format : string -> string
 (** [format s] cleans [s] by capitalizing all letters and removing leading and 
     trailing white spaces. *)

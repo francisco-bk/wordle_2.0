@@ -31,3 +31,18 @@ val hint_letter : hint -> string
 val get_hint_tup : t -> (string * int) list
 (** [get_hint_tup eng] is the color representations of all hints stored in
     [eng]. *)
+
+val correct_word : t -> string
+(** [correct_word e] is the answer contained by [e]. *)
+
+val unguessed_letters : t -> string list
+(** [correct_word e] is the answer contained by [e]. *)
+
+val grey_letters : t -> string list
+(** [grey_letters e] is [e]'s known grey letters. *)
+
+val yellow_letters : t -> string list
+(** [correct_word e] is [e]'s known yellow letters. *)
+
+val green_letters : t -> string list
+(** [correct_word e] is [e]'s known green letters. *)

@@ -154,3 +154,9 @@ let rec get_hints hints =
 let get_hint_tup engine = 
   let hints = engine.hints in
     get_hints hints
+
+let correct_word e = e.answer
+let unguessed_letters e = e.keyboard.unguessed_letters
+let grey_letters e = e.keyboard.grey_letters
+let yellow_letters e = e.keyboard.yellow_letters
+let green_letters e = e.keyboard.green_letters
