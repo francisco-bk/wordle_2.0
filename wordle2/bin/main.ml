@@ -2,6 +2,7 @@ open Game
 open Processor
 open Randpick
 open Load
+open Leaderboard
 
 (** [dict] initializes itself to an empty list as a mutable field *)
 let dict : string list ref = ref []
@@ -9,6 +10,9 @@ let dict : string list ref = ref []
 (** [dict_f length] returns a string list of all words based on the user-input
     [length] *)
 let dict_f (l:int): string list = l |> load |> dict_lst
+
+(*[name] is the name of entered by the current player*)
+let name :string ref= ref ""
 
 (** [correct_word] initializes itself to an empty string as a mutable field*)
 let correct_word : string ref = ref ""
@@ -27,6 +31,9 @@ let difficulty : int ref = ref 0
     attemps [a] length [l] and penalties [p].
     Precondition: p cannot be more than the length.*)
 let score a l p = string_of_int (max 0 ((10 - a) * l - p))
+
+(*[leaderboard] represents a list that contains the leaderboard *)
+let leaderboard = ref []
 
 (** [hint_engine] represents the hint engine of the game. It initializes itself
     to a new engine. *)
@@ -125,13 +132,37 @@ let print_HintEngine guess =
   print_word colored_guess
 
 (** [end_screen ()] represents the state after the game ends. *)
+
+let print_leaderboard (): unit = 
+if List.length !leaderboard = 0 then print_endline "Win more games to fill up the leaderboard!" else let lst = !leaderboard in (
+(print_endline "Leaderboard:";print_endline ((fst (List.nth lst 0)) ^ "   " ^ (string_of_int (snd (List.nth lst 0)))));
+if List.length lst = 2 then 
+(print_endline ((fst (List.nth lst 1)) ^ "   " ^ (string_of_int (snd (List.nth lst 1))))) else ();
+if List.length lst = 3 then 
+(print_endline ((fst (List.nth lst 2)) ^ "   " ^ (string_of_int (snd (List.nth lst 2))))) else ();
+if List.length lst = 2 then 
+(print_endline ((fst (List.nth lst 3)) ^ "   " ^ (string_of_int (snd (List.nth lst 3)))))else ();
+if List.length lst = 2 then 
+(print_endline ((fst (List.nth lst 4)) ^ "   " ^ (string_of_int (snd (List.nth lst 4)))))else ();)
+
+
+  (** [end_screen ()] represents the state after the game ends. *)
 let end_screen guesses win () =
-  let final_score = score (List.length guesses + 1) !length !penalties in
-  if win then 
-  (print_endline "\nCongratulations! You have guessed the correct word!";
+  let final_score = score (List.length guesses + 1) !length !penalties in (
+if win then 
+  (Leaderboard.write (!length) (!name^" ,"^ final_score ^ ";");
+    print_endline "\nCongratulations! You have guessed the correct word!";
   print_endline ("Score: " ^ final_score);
-  print_endline "") else (print_endline "\nYou didn't guess the word :(";
-    print_endline ("The word was: " ^ !correct_word))
+  print_endline ""; 
+  leaderboard := ( (get_board (!length)) |> board_lst |> pick_first_five);
+  print_leaderboard ()) 
+
+else (print_endline "\nYou didn't guess the word :(";
+    print_endline ("The word was: " ^ !correct_word);
+    leaderboard := ( (get_board (!length)) |> board_lst |> pick_first_five);
+    print_leaderboard ()))
+    
+
 let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the \
   game is to find the secret "^ string_of_int !length ^ " letter word.\n - To \
   add a word into the game, type it into the terminal.\n - If the letter(s) \
@@ -141,7 +172,7 @@ let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the \
   the letter(s) in the word suggested is not in the solution, it will come \
   out as grey.\nThe end goal is to get the secret word in 6 tries or less.\
   \n\nGood Luck!\n\n"
-let leaderboard = "\nLeaderboard:\nTO BE IMPLEMENTED\n\n"
+
 let hint = "Get a (yellow) letter hint, (grey) letter hint, or (cancel)."
 
 let print_hint hint =
@@ -170,9 +201,23 @@ let rec prompt_hint () =
 
 let igCommand inp = match inp with
   | "i" -> print_string(instructions)
-  | "l" -> print_string(leaderboard)
+  | "l" -> print_leaderboard ()
   | "h" -> prompt_hint ()
   | _ -> print_string("")
+
+(** [choose_name()] asks for the name of the player.*)
+let rec choose_name () = 
+print_endline "How would you like to be called? \n ***This is the name that will be displayed on the leaderboard ";
+print_string "> ";
+let name' = read_line () in 
+let v = ref true in 
+let valid c:unit= if (Char.code c >= 97 && Char.code c <= 122) || (Char.code c >= 48 && Char.code c <=57) || Char.code c = 95 
+  then v:=true else v:=false in
+if String.length name' > 10 then (print_endline "Please enter a name that's no longer than 10 characters.";choose_name ())
+else if (let () = String.lowercase_ascii name' |> String.iter (valid) in !v) then name := name'
+else (print_endline "Please enter a valid name that only contains letters, numbers or underscore.";choose_name ())
+
+
 
 (** [choose_length ()] prompts the player to choose the length of the word
     they want.*)
@@ -247,6 +292,7 @@ let start () =
   print_endline "Press ANY key and ENTER to start!";
   print_string "> ";
   let _ = String.lowercase_ascii (read_line ()) in
+  choose_name ();
   choose_length ();
   choose_difficulty ();
   play [] !difficulty !length
