@@ -7,7 +7,7 @@ open Load
 let dict : string list ref = ref []
 
 (** [dict_f length] returns a string list of all words based on the user-input
-[length] *)
+    [length] *)
 let dict_f (l:int): string list = l |> load |> dict_lst
 
 (** [correct_word] initializes itself to an empty string as a mutable field*)
@@ -24,8 +24,8 @@ let penalties : int ref = ref 0
 let difficulty : int ref = ref 0
 
 (** [score a l p] represents the score of the user upon completion based on
-   attemps [a] length [l] and penalties [p].
-   Precondition: p cannot be more than the length.*)
+    attemps [a] length [l] and penalties [p].
+    Precondition: p cannot be more than the length.*)
 let score a l p = string_of_int (max 0 ((10 - a) * l - p))
 
 (** [hint_engine] represents the hint engine of the game. It initializes itself
@@ -97,9 +97,9 @@ let rec make_grid row column (guesses : ((string * int) list) list) : unit =
     make_grid (row - 1) column t
 
 (** [make_game d l g] makes a game with [d] rows representing the difficulty,
-[l] letter representing the number of letters, and with [g] guesses representing
-the guesses so far.
-Precondition : length of guesses is smaller then dif*)
+    [l] letter representing the number of letters, and with [g] guesses representing
+    the guesses so far.
+    Precondition : length of guesses is smaller then dif*)
 let make_game dif letters guesses : unit =
   print_endline ("    Wordle 2.0 ( i ) ( l ) ( h ) ( r )");
   make_grid dif letters guesses;
@@ -116,7 +116,7 @@ let rec print_word colored_word =
   print_word t
 
 (** [in_check str] check if the str is a valid word by comparing it to dict*)
-let in_check str :bool=
+let in_check str : bool=
   in_dict !dict str && 
     (str != "i") && (str != "l") && (str != "h") && (str != "r")
 
@@ -175,7 +175,7 @@ let igCommand inp = match inp with
   | _ -> print_string("")
 
 (** [choose_length ()] prompts the player to choose the length of the word
-they want.*)
+    they want.*)
 let rec choose_length () = 
   print_endline "Please choose a number between 2 and 10, inclusive, to be the \
   length: ";
@@ -224,7 +224,7 @@ let rec play (guesses : ((string*int) list)list) dif letters =
   else command_choice dif letters guesses input
 
 (** [command_choice dif letters guesses input] executes a command in play that
-     is not a valid word*)
+    is not a valid word*)
 and command_choice dif letters guesses input  = 
   if (input = "r") then (
     ANSITerminal.print_string [ ANSITerminal.Underlined ] 
