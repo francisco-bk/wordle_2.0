@@ -26,7 +26,7 @@ let difficulty : int ref = ref 0
 (** [score a l p] represents the score of the user upon completion based on
    attemps [a] length [l] and penalties [p].
    Precondition: p cannot be more than the length.*)
-let score a l p = string_of_int ((10 - a) * l - p)
+let score a l p = string_of_int (max 0 ((10 - a) * l - p))
 
 (** [hint_engine] represents the hint engine of the game. It initializes itself
     to a new engine. *)
