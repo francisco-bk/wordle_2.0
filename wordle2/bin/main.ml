@@ -16,9 +16,17 @@ let correct_word : string ref = ref ""
 (** [length] represents the length of the word. It initializes itself to 0 *)
 let length : int ref = ref 0
 
+(** [penalties] represents the penalties in a game. I initializes itself to 0 *)
+let penalties : int ref = ref 0
+
 (** [difficulty] represents the diffuculty of the game. It initializes itself
     to 0 *)
 let difficulty : int ref = ref 0
+
+(** [score a l p] represents the score of the user upon completion based on
+   attemps [a] length [l] and penalties [p].
+   Precondition: p cannot be more than the length.*)
+let score a l p = string_of_int ((10 - a) * l - p)
 
 (** [hint_engine] represents the hint engine of the game. It initializes itself
     to a new engine. *)
@@ -117,10 +125,11 @@ let print_HintEngine guess =
   print_word colored_guess
 
 (** [end_screen ()] represents the state after the game ends. *)
-let end_screen win () =
+let end_screen guesses win () =
+  let final_score = score (List.length guesses + 1) !length !penalties in
   if win then 
   (print_endline "\nCongratulations! You have guessed the correct word!";
-  print_endline "Score: (To be implemented)";
+  print_endline ("Score: " ^ final_score);
   print_endline "") else (print_endline "\nYou didn't guess the word :(";
     print_endline ("The word was: " ^ !correct_word))
 let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the \
@@ -147,12 +156,14 @@ let rec prompt_hint () =
   | "grey" ->
     (match HintEngine.get_hint 0 !hint_engine with
     | (Some hint, new_hist) -> print_hint hint; hint_engine := new_hist;
+      penalties := !penalties + 1;
     | (None, _) -> print_endline "There are no more grey letters!";
       prompt_hint ())
   | "yellow" -> 
     (match HintEngine.get_hint 1 !hint_engine with
     | (Some hint, new_hist) -> print_hint hint; hint_engine := new_hist;
-    | (None, _) -> print_endline "There are no more yellow letters!"; 
+      penalties := !penalties + 1;
+    | (None, _) -> print_endline "There are no more yellow letters!";
       prompt_hint ())
   | "cancel" -> ()
   | _ -> print_endline "Your input is invalid."; prompt_hint ()
@@ -201,13 +212,13 @@ let rec play (guesses : ((string*int) list)list) dif letters =
   let output = input |> naive_processor in
   match output with
   | true -> make_game dif letters 
-    (guesses @ [(colorize_guess !correct_word input)]); end_screen true ()
+    (guesses @ [(colorize_guess !correct_word input)]); end_screen guesses true ()
   | false ->
     hint_engine := HintEngine.add_guess !hint_engine input;
     if (List.length guesses + 1) = dif
     then (
       make_game dif letters (guesses @ [(colorize_guess !correct_word input)]);
-      end_screen false ()) 
+      end_screen guesses false ()) 
     else
       play (guesses @ [(colorize_guess !correct_word input)]) dif letters )
   else command_choice dif letters guesses input
@@ -218,7 +229,8 @@ and command_choice dif letters guesses input  =
   if (input = "r") then (
     ANSITerminal.print_string [ ANSITerminal.Underlined ] 
     "\n\nStarting New Game\n\n";
-    correct_word := correctword letters; 
+    correct_word := correctword letters;
+    penalties := 0;
     hint_engine := HintEngine.init_engine !correct_word;
     play [] dif letters) 
   else if (input = "i"  || input = "l" || input = "h") 
