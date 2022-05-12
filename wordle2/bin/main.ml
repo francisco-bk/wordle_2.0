@@ -53,8 +53,8 @@ let keyboard = [["q"; "w"; "e"; "r"; "t"; "y"; "u"; "i"; "o"; "p"];
   ["z"; "x"; "c"; "v"; "b"; "n"; "m"]]
 
 let rec guess_list guesses = match guesses with
-| [] -> []
-| h :: t -> h @ guess_list t
+  | [] -> []
+  | h :: t -> h @ guess_list t
 
 let rec make_colored_row row (guesses : (string * int) list) : unit = 
   match row with
@@ -157,11 +157,11 @@ let rec prompt_hint () =
   | "cancel" -> ()
   | _ -> print_endline "Your input is invalid."; prompt_hint ()
 
-  let igCommand inp = match inp with
-| "i" -> print_string(instructions)
-| "l" -> print_string(leaderboard)
-| "h" -> prompt_hint ()
-| _ -> print_string("")
+let igCommand inp = match inp with
+  | "i" -> print_string(instructions)
+  | "l" -> print_string(leaderboard)
+  | "h" -> prompt_hint ()
+  | _ -> print_string("")
 
 (** [choose_length ()] prompts the player to choose the length of the word
 they want.*)
@@ -190,6 +190,8 @@ which represent the number of attempts.";
   with Failure _ ->
     (print_endline "This is not a valid number!"; choose_length ())
 
+
+
 (** [play ()] represents the in-game state. *)
 let rec play (guesses : ((string*int) list)list) dif letters =
   make_game dif letters guesses;
@@ -208,7 +210,12 @@ let rec play (guesses : ((string*int) list)list) dif letters =
       end_screen false ()) 
     else
       play (guesses @ [(colorize_guess !correct_word input)]) dif letters )
-  else if (input = "r") then (
+  else command_choice dif letters guesses input
+
+(** [command_choice dif letters guesses input] executes a command in play that
+     is not a valid word*)
+and command_choice dif letters guesses input  = 
+  if (input = "r") then (
     ANSITerminal.print_string [ ANSITerminal.Underlined ] 
     "\n\nStarting New Game\n\n";
     correct_word := correctword letters; 
