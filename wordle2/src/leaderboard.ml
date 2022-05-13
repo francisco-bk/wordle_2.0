@@ -30,8 +30,8 @@ let write (length : int) (msg : string) =
   (* write something *)
   close_out oc
 
-let check_board (lst) :bool = 
-    if List.length lst <> 0 then true else false 
+let check_board (lst) : bool = 
+  if List.length lst <> 0 then true else false 
 
 let pick_first_five lst = 
   let new_player_lst = List.filter (fun x -> String.contains x ' ') lst in 
