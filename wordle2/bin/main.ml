@@ -144,29 +144,29 @@ let print_leaderboard (): unit =
   if List.length lst = 3 then 
     (print_endline ((fst (List.nth lst 2)) ^ "   " ^ 
     (string_of_int (snd (List.nth lst 2))))) else ();
-  if List.length lst = 2 then 
+  if List.length lst = 4 then 
     (print_endline ((fst (List.nth lst 3)) ^ "   " ^ 
     (string_of_int (snd (List.nth lst 3)))))else ();
-  if List.length lst = 2 then 
+  if List.length lst = 5 then 
     (print_endline ((fst (List.nth lst 4)) ^ "   " ^ 
     (string_of_int (snd (List.nth lst 4)))))else ();)
 
 
+
   (** [end_screen ()] represents the state after the game ends. *)
 let end_screen guesses win () =
-  let final_score = score (List.length guesses + 1) !length !penalties in (
-    if win then 
-      (Leaderboard.write (!length) (!name^" ,"^ final_score ^ ";");
-        print_endline "\nCongratulations! You have guessed the correct word!";
-      print_endline ("Score: " ^ final_score);
-      print_endline ""; 
-      leaderboard := ( (get_board (!length)) |> board_lst |> pick_first_five);
-      print_leaderboard ()) 
-
-    else (print_endline "\nYou didn't guess the word :(";
-        print_endline ("The word was: " ^ !correct_word);
-        leaderboard := ( (get_board (!length)) |> board_lst |> pick_first_five);
-        print_leaderboard ()))
+  let final_score = score (List.length guesses + 1) !length !penalties in 
+if win then (Leaderboard.write (!length) (((get_board (!length)) |> 
+  board_lst |> format) ^ !name ^ " ," ^ final_score ^ ";");
+  print_endline "\nCongratulations! You have guessed the correct word!";
+  print_endline ("Score: " ^ final_score);
+  print_endline ""; 
+  leaderboard := ( (get_board (!length)) |> board_lst |> pick_first_five);
+  print_leaderboard ()) 
+else (print_endline "\nYou didn't guess the word :(";
+  print_endline ("The word was: " ^ !correct_word);
+  leaderboard := ( (get_board (!length)) |> board_lst |> pick_first_five);
+  print_leaderboard ())
     
 
 let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the \
