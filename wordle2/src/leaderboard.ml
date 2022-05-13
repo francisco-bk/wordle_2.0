@@ -23,12 +23,11 @@ let board_lst (file : in_channel) =
 
 let format lst : string = 
   let new_player_lst = List.filter (fun x -> String.contains x ' ') lst in 
-let new_score_lst = List.filter ((fun x -> not (String.contains x ' '))) lst |>
- List.map (fun x -> (print_endline x;int_of_string x)) in let new_lst = 
-  List.combine new_player_lst new_score_lst in List.fold_left (fun init x 
-  -> (fst x) ^ "" ^ "," ^ string_of_int (snd x) ^ ";" ^ init) "" new_lst
-
-
+  let new_score_lst = List.filter ((fun x -> not (String.contains x ' '))) lst 
+  |>List.map (fun x -> (print_endline x;int_of_string x)) in 
+  let new_lst = List.combine new_player_lst new_score_lst in 
+    List.fold_left (fun init x -> (fst x) ^ "" ^ "," ^ string_of_int (snd x) ^
+     ";" ^ init) "" new_lst
 
 let write (length:int )(msg:string ) = 
   (* Write message to file *)
