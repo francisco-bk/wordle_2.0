@@ -36,7 +36,13 @@ open HintEngine
   store the letters correctly when updated, then [HintEngine.t] will output
   valid hints without giving ones with unhelpful information.
 
-[Processor.ml]: TODO
+[Processor.ml]: Automatically tested by OUnit. Black box testing was used
+  to generate test cases. Processor's job is to color the guesses bases on the
+  answer in the wordle game state, we are able to prove correctness since there 
+  are so many different possible cases for the array output, black box testing 
+  is the most efficient way to cover the most possible cases efficiently. Both
+  general cases with little in common were used, and boundary cases to make 
+  sure it works for all possible works and lengths.
 *)
 
 
@@ -439,7 +445,8 @@ let hint_tests =
   guessing four grey letters in engine with answer \"bee\" should have yellow
   keyboard with \"b\""
   (bee_engine_st4 |> yellow_letters) ["b"] (pp_list i) ( cmp_list );
-  test2 "getting one yellow hint after guessing \"eye\", getting grey hint and getting four grey letters
+  test2 "getting one yellow hint after guessing \"eye\", getting grey hint and 
+    getting four grey letters
   in engine with answer \"bee\" should have empty green keyboard"
   (bee_engine_st4 |> green_letters) ["e"] (pp_list i) ( cmp_list );
 
