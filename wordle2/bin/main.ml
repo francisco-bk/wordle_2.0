@@ -47,8 +47,9 @@ let rec empty_row column : string =
 
 let rec empty_grid row column : unit = 
   let e_line = empty_row column in 
-    if row = 0 then () else ((print_endline (String.make ((40 - 4*column)/2) ' ' ^ e_line)); 
-    empty_grid (row - 1) column)
+    if row = 0 then () else 
+      ((print_endline (String.make ((40 - 4*column)/2) ' ' ^ e_line)); 
+      empty_grid (row - 1) column)
     
 let print_color_letter c_tuple = match c_tuple with
   | (c, 0) -> print_string c
@@ -104,8 +105,8 @@ let rec make_grid row column (guesses : ((string * int) list) list) : unit =
     make_grid (row - 1) column t
 
 (** [make_game d l g] makes a game with [d] rows representing the difficulty,
-    [l] letter representing the number of letters, and with [g] guesses representing
-    the guesses so far.
+    [l] letter representing the number of letters, and with [g] guesses 
+    representing the guesses so far.
     Precondition : length of guesses is smaller then dif*)
 let make_game dif letters guesses : unit =
   print_endline ("    Wordle 2.0 ( i ) ( l ) ( h ) ( r )");
@@ -131,38 +132,41 @@ let print_HintEngine guess =
   let colored_guess = Processor.colorize_guess !correct_word guess in
   print_word colored_guess
 
-(** [end_screen ()] represents the state after the game ends. *)
-
 let print_leaderboard (): unit = 
-if List.length !leaderboard = 0 then print_endline "Win more games to fill up the leaderboard!" else let lst = !leaderboard in (
-(print_endline "Leaderboard:";print_endline ((fst (List.nth lst 0)) ^ "   " ^ (string_of_int (snd (List.nth lst 0)))));
-if List.length lst = 2 then 
-(print_endline ((fst (List.nth lst 1)) ^ "   " ^ (string_of_int (snd (List.nth lst 1))))) else ();
-if List.length lst = 3 then 
-(print_endline ((fst (List.nth lst 2)) ^ "   " ^ (string_of_int (snd (List.nth lst 2))))) else ();
-if List.length lst = 4 then 
-(print_endline ((fst (List.nth lst 3)) ^ "   " ^ (string_of_int (snd (List.nth lst 3)))))else ();
-if List.length lst = 5 then 
-(print_endline ((fst (List.nth lst 4)) ^ "   " ^ (string_of_int (snd (List.nth lst 4)))))else ();)
+  if List.length !leaderboard = 0 then 
+    print_endline "Win more games to fill up the leaderboard!" else 
+      let lst = !leaderboard in ((print_endline "Leaderboard:";
+        print_endline ((fst (List.nth lst 0)) ^ "   " ^ 
+        (string_of_int (snd (List.nth lst 0)))));
+  if List.length lst = 2 then 
+    (print_endline ((fst (List.nth lst 1)) ^ "   " ^ 
+    (string_of_int (snd (List.nth lst 1))))) else ();
+  if List.length lst = 3 then 
+    (print_endline ((fst (List.nth lst 2)) ^ "   " ^ 
+    (string_of_int (snd (List.nth lst 2))))) else ();
+  if List.length lst = 4 then 
+    (print_endline ((fst (List.nth lst 3)) ^ "   " ^ 
+    (string_of_int (snd (List.nth lst 3)))))else ();
+  if List.length lst = 5 then 
+    (print_endline ((fst (List.nth lst 4)) ^ "   " ^ 
+    (string_of_int (snd (List.nth lst 4)))))else ();)
 
 
 
   (** [end_screen ()] represents the state after the game ends. *)
 let end_screen guesses win () =
-  let final_score = score (List.length guesses + 1) !length !penalties in (
-if win then 
-  (Leaderboard.write (!length) (((get_board (!length)) |> 
-board_lst |> format) ^ !name ^ " ," ^ final_score ^ ";");
-    print_endline "\nCongratulations! You have guessed the correct word!";
+  let final_score = score (List.length guesses + 1) !length !penalties in 
+if win then (Leaderboard.write (!length) (((get_board (!length)) |> 
+  board_lst |> format) ^ !name ^ " ," ^ final_score ^ ";");
+  print_endline "\nCongratulations! You have guessed the correct word!";
   print_endline ("Score: " ^ final_score);
   print_endline ""; 
   leaderboard := ( (get_board (!length)) |> board_lst |> pick_first_five);
   print_leaderboard ()) 
-
 else (print_endline "\nYou didn't guess the word :(";
-    print_endline ("The word was: " ^ !correct_word);
-    leaderboard := ( (get_board (!length)) |> board_lst |> pick_first_five);
-    print_leaderboard ()))
+  print_endline ("The word was: " ^ !correct_word);
+  leaderboard := ( (get_board (!length)) |> board_lst |> pick_first_five);
+  print_leaderboard ())
     
 
 let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the \
@@ -209,17 +213,23 @@ let igCommand inp = match inp with
 
 (** [choose_name()] asks for the name of the player.*)
 let rec choose_name () = 
-print_endline "How would you like to be called? \n ***This is the name that will be displayed on the leaderboard ";
-print_string "> ";
-let name' = read_line () in 
-let v = ref true in 
-let valid c:unit= if (Char.code c >= 97 && Char.code c <= 122) || (Char.code c >= 48 && Char.code c <=57) || Char.code c = 95 
-  then v:=true else v:=false in
-if String.length name' > 10 then (print_endline "Please enter a name that's no longer than 10 characters.";choose_name ())
-else if (let () = String.lowercase_ascii name' |> String.iter (valid) in !v) then name := name'
-else (print_endline "Please enter a valid name that only contains letters, numbers or underscore.";choose_name ())
-
-
+  print_endline "How would you like to be called? \n ***This is the name that \
+    will be displayed on the leaderboard ";
+  print_string "> ";
+  let name' = read_line () in 
+    let v = ref true in 
+    let valid c:unit= if (Char.code c >= 97 && Char.code c <= 122) || 
+        (Char.code c >= 48 && Char.code c <=57) || Char.code c = 95 
+      then v:=true else v:=false in
+        if String.length name' > 10 then 
+          (print_endline 
+          "Please enter a name that's no longer than 10 characters.";
+          choose_name ())
+        else if 
+          (let () = String.lowercase_ascii name' |> String.iter (valid) in !v) 
+          then name := name'
+        else (print_endline "Please enter a valid name that only 
+          contains letters, numbers or underscore."; choose_name ())
 
 (** [choose_length ()] prompts the player to choose the length of the word
     they want.*)
@@ -259,7 +269,8 @@ let rec play (guesses : ((string*int) list)list) dif letters =
   let output = input |> naive_processor in
   match output with
   | true -> make_game dif letters 
-    (guesses @ [(colorize_guess !correct_word input)]); end_screen guesses true ()
+    (guesses @ [(colorize_guess !correct_word input)]); 
+    end_screen guesses true ()
   | false ->
     hint_engine := HintEngine.add_guess !hint_engine input;
     if (List.length guesses + 1) = dif
@@ -298,5 +309,4 @@ let start () =
   choose_length ();
   choose_difficulty ();
   play [] !difficulty !length
-
 let () = start ()

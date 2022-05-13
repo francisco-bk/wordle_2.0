@@ -7,7 +7,6 @@ val check_board: 'a list -> bool
 val write : int -> string -> unit 
 (*[write] writes to the leaderboard txt files*)
 
-
 val board_lst :in_channel -> string list 
 (*[board_lst] returns a list that contains all player/score pairs*)
 
