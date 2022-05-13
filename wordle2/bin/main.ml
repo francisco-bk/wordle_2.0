@@ -132,41 +132,46 @@ let print_HintEngine guess =
   let colored_guess = Processor.colorize_guess !correct_word guess in
   print_word colored_guess
 
-let print_leaderboard (): unit = 
-  if List.length !leaderboard = 0 then 
-    print_endline "Win more games to fill up the leaderboard!" else 
-      let lst = !leaderboard in ((print_endline "Leaderboard:";
-        print_endline ((fst (List.nth lst 0)) ^ "   " ^ 
-        (string_of_int (snd (List.nth lst 0)))));
-  if List.length lst = 2 then 
+let rec ab input  =
+  match input with
+  | [] -> ""
+  | (a, b) :: t -> "(" ^ a ^ " : " ^ string_of_int b ^ "); " ^ ab t
+
+let print_leaderboard (): unit =
+  let length = List.length !leaderboard in
+  if length = 0 then 
+    print_endline "Win more games to fill up the leaderboard!" 
+  else let lst = !leaderboard in 
+    ((print_endline "Leaderboard:";
+    print_endline ((fst (List.nth lst 0)) ^ "   " ^ 
+    (string_of_int (snd (List.nth lst 0)))));
+  if length >= 2 then 
     (print_endline ((fst (List.nth lst 1)) ^ "   " ^ 
     (string_of_int (snd (List.nth lst 1))))) else ();
-  if List.length lst = 3 then 
+  if length >= 3 then 
     (print_endline ((fst (List.nth lst 2)) ^ "   " ^ 
     (string_of_int (snd (List.nth lst 2))))) else ();
-  if List.length lst = 2 then 
+  if length >= 4 then 
     (print_endline ((fst (List.nth lst 3)) ^ "   " ^ 
     (string_of_int (snd (List.nth lst 3)))))else ();
-  if List.length lst = 2 then 
+  if length >= 5 then 
     (print_endline ((fst (List.nth lst 4)) ^ "   " ^ 
     (string_of_int (snd (List.nth lst 4)))))else ();)
 
-
-  (** [end_screen ()] represents the state after the game ends. *)
+(** [end_screen ()] represents the state after the game ends. *)
 let end_screen guesses win () =
-  let final_score = score (List.length guesses + 1) !length !penalties in (
-    if win then 
-      (Leaderboard.write (!length) (!name^" ,"^ final_score ^ ";");
-        print_endline "\nCongratulations! You have guessed the correct word!";
-      print_endline ("Score: " ^ final_score);
-      print_endline ""; 
-      leaderboard := ( (get_board (!length)) |> board_lst |> pick_first_five);
-      print_leaderboard ()) 
-
-    else (print_endline "\nYou didn't guess the word :(";
-        print_endline ("The word was: " ^ !correct_word);
-        leaderboard := ( (get_board (!length)) |> board_lst |> pick_first_five);
-        print_leaderboard ()))
+  let final_score = score (List.length guesses + 1) !length !penalties in 
+if win then (Leaderboard.write (!length) (((get_board (!length)) |> 
+  board_lst |> format) ^ !name ^ " ," ^ final_score ^ ";");
+  print_endline "\nCongratulations! You have guessed the correct word!";
+  print_endline ("Score: " ^ final_score);
+  print_endline ""; 
+  leaderboard := ( (get_board (!length)) |> board_lst |> pick_first_five);
+  print_leaderboard ()) 
+else (print_endline "\nYou didn't guess the word :(";
+  print_endline ("The word was: " ^ !correct_word);
+  leaderboard := ( (get_board (!length)) |> board_lst |> pick_first_five);
+  print_leaderboard ())
     
 
 let instructions = "\nInstructions:\nWelcome to Wordle 2.0, the goal of the \
