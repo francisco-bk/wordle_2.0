@@ -5,20 +5,30 @@ let get_board (length:int): in_channel =
 
 
 let str_to_lst (strings:string)  : string list = 
-  let lst = strings |> String.split_on_char ';' |> List.filter (fun x -> x <> "") |> List.map (fun x -> String.trim x) in (
-  (List.map (fun x -> String.split_on_char ',' x) lst) |> List.flatten |> List.filter (fun x -> x <> ""))
+  let lst = strings |> String.split_on_char ';' |> List.filter (fun x -> x <> 
+  "") |> List.map (fun x -> String.trim x) in (
+  (List.map (fun x -> String.split_on_char ',' x) lst) |> List.flatten |> 
+  List.filter (fun x -> x <> ""))
 
 let board_lst (file : in_channel) = 
     try  
       flush stdout;             
-      let strings = input_line file in (
-        str_to_lst strings)
-    with e ->                    
+      let strings = input_line file in 
+      (str_to_lst strings)
+    with _ ->                    
       close_in_noerr file;          
-      raise e
+      []
+
+let format lst : string = 
+  let new_player_lst = List.filter (fun x -> String.contains x ' ') lst in 
+let new_score_lst = List.filter ((fun x -> not (String.contains x ' '))) lst |>
+ List.map (fun x -> (print_endline x;int_of_string x)) in let new_lst = 
+  List.combine new_player_lst new_score_lst in List.fold_left (fun init x 
+  -> (fst x) ^ "" ^ "," ^ string_of_int (snd x) ^ ";" ^ init) "" new_lst
 
 
-let write (length:int )(msg:string ) =(
+
+let write (length:int )(msg:string ) =( 
   (* Write message to file *)
   let oc = open_out (("wordle2/data/leaderboard" ^ (string_of_int length)^".txt")) in
   (* create or truncate file, return channel *)
@@ -32,7 +42,7 @@ let check_board (lst) :bool =
 let pick_first_five lst = 
   
 let new_player_lst = List.filter (fun x -> String.contains x ' ') lst in 
-let new_score_lst = List.filter ((fun x -> not (String.contains x ' '))) lst |> List.map (fun x -> (print_endline x;int_of_string x)) in 
+let new_score_lst = List.filter ((fun x -> not (String.contains x ' '))) lst |> List.map (fun x -> (int_of_string x)) in 
 let compare p1 p2 = 
   match p1,p2 with 
   |(_,s),(_,s') -> 

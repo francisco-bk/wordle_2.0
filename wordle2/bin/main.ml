@@ -140,17 +140,19 @@ if List.length lst = 2 then
 (print_endline ((fst (List.nth lst 1)) ^ "   " ^ (string_of_int (snd (List.nth lst 1))))) else ();
 if List.length lst = 3 then 
 (print_endline ((fst (List.nth lst 2)) ^ "   " ^ (string_of_int (snd (List.nth lst 2))))) else ();
-if List.length lst = 2 then 
+if List.length lst = 4 then 
 (print_endline ((fst (List.nth lst 3)) ^ "   " ^ (string_of_int (snd (List.nth lst 3)))))else ();
-if List.length lst = 2 then 
+if List.length lst = 5 then 
 (print_endline ((fst (List.nth lst 4)) ^ "   " ^ (string_of_int (snd (List.nth lst 4)))))else ();)
+
 
 
   (** [end_screen ()] represents the state after the game ends. *)
 let end_screen guesses win () =
   let final_score = score (List.length guesses + 1) !length !penalties in (
 if win then 
-  (Leaderboard.write (!length) (!name^" ,"^ final_score ^ ";");
+  (Leaderboard.write (!length) (((get_board (!length)) |> 
+board_lst |> format) ^ !name ^ " ," ^ final_score ^ ";");
     print_endline "\nCongratulations! You have guessed the correct word!";
   print_endline ("Score: " ^ final_score);
   print_endline ""; 
