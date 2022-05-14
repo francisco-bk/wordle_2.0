@@ -199,26 +199,17 @@ let print_leaderboard () : unit =
         ^ string_of_int (snd (List.nth lst 4)))
     else ()
 
-(** [end_screen ()] represents the state after the game ends. *)
-let end_screen guesses win () =
-  let final_score =
-    score (List.length guesses + 1) !length !penalties
-  in
-  if win then (
-    Leaderboard.write !length
-      ((get_board !length |> board_lst |> format)
-      ^ !name ^ " ," ^ final_score ^ ";");
-    print_endline
-      "\nCongratulations! You have guessed the correct word!";
-    print_endline ("Score: " ^ final_score);
-    print_endline "";
-    leaderboard := get_board !length |> board_lst |> pick_first_five;
-    print_leaderboard ())
-  else (
-    print_endline "\nYou didn't guess the word :(";
-    print_endline ("The word was: " ^ !correct_word);
-    leaderboard := get_board !length |> board_lst |> pick_first_five;
-    print_leaderboard ())
+(* * [end_screen ()] represents the state after the game ends. *)
+(* let end_screen guesses win () = let final_score = score (List.length
+   guesses + 1) !length !penalties in if win then ( Leaderboard.write
+   !length ((get_board !length |> board_lst |> format) ^ !name ^ " ," ^
+   final_score ^ ";"); print_endline "\nCongratulations! You have
+   guessed the correct word!"; print_endline ("Score: " ^ final_score);
+   print_endline ""; leaderboard := get_board !length |> board_lst |>
+   pick_first_five; print_leaderboard ()) else ( print_endline "\nYou
+   didn't guess the word :("; print_endline ("The word was: " ^
+   !correct_word); leaderboard := get_board !length |> board_lst |>
+   pick_first_five; print_leaderboard ()) *)
 
 let start_logo =
   "\n\
@@ -247,6 +238,47 @@ let start_logo =
    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░██║░░░╚█████╔╝░░░░░░░░░░░░░░░░░░░░░░░░░░░░  \n\
   \  \
    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░╚═╝░░░░╚════╝░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  \n\
+  \  \n\
+  \  \
+   ░██╗░░░░░░░██╗░█████╗░██████╗░██████╗░██╗░░░░░███████╗  ██████╗░░░░░█████╗░\n\
+  \  \
+   ░██║░░██╗░░██║██╔══██╗██╔══██╗██╔══██╗██║░░░░░██╔════╝  ╚════██╗░░░██╔══██╗\n\
+  \  \
+   ░╚██╗████╗██╔╝██║░░██║██████╔╝██║░░██║██║░░░░░█████╗░░  ░░███╔═╝░░░██║░░██║\n\
+  \  \
+   ░░████╔═████║░██║░░██║██╔══██╗██║░░██║██║░░░░░██╔══╝░░  ██╔══╝░░░░░██║░░██║\n\
+  \  \
+   ░░╚██╔╝░╚██╔╝░╚█████╔╝██║░░██║██████╔╝███████╗███████╗  ███████╗██╗╚█████╔╝\n\
+  \  \
+   ░░░╚═╝░░░╚═╝░░░╚════╝░╚═╝░░╚═╝╚═════╝░╚══════╝╚══════╝  ╚══════╝╚═╝░╚════╝░"
+
+let thank_you_message =
+  "\n\
+  \  \
+   ████████╗██╗░░██╗░█████╗░███╗░░██╗██╗░░██╗  ██╗░░░██╗░█████╗░██╗░░░██╗  \n\
+  \  \
+   ╚══██╔══╝██║░░██║██╔══██╗████╗░██║██║░██╔╝  ╚██╗░██╔╝██╔══██╗██║░░░██║  \n\
+  \  \
+   ░░░██║░░░███████║███████║██╔██╗██║█████═╝░  ░╚████╔╝░██║░░██║██║░░░██║  \n\
+  \  \
+   ░░░██║░░░██╔══██║██╔══██║██║╚████║██╔═██╗░  ░░╚██╔╝░░██║░░██║██║░░░██║  \n\
+  \  \
+   ░░░██║░░░██║░░██║██║░░██║██║░╚███║██║░╚██╗  ░░░██║░░░╚█████╔╝╚██████╔╝  \n\
+  \  \
+   ░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚═╝  ░░░╚═╝░░░░╚════╝░░╚═════╝░  \n\
+  \  \n\
+  \  \
+   ███████╗░█████╗░██████╗░  ██████╗░██╗░░░░░░█████╗░██╗░░░██╗██╗███╗░░██╗░██████╗░\n\
+  \  \
+   ██╔════╝██╔══██╗██╔══██╗  ██╔══██╗██║░░░░░██╔══██╗╚██╗░██╔╝██║████╗░██║██╔════╝░\n\
+  \  \
+   █████╗░░██║░░██║██████╔╝  ██████╔╝██║░░░░░███████║░╚████╔╝░██║██╔██╗██║██║░░██╗░\n\
+  \  \
+   ██╔══╝░░██║░░██║██╔══██╗  ██╔═══╝░██║░░░░░██╔══██║░░╚██╔╝░░██║██║╚████║██║░░╚██╗\n\
+  \  \
+   ██║░░░░░╚█████╔╝██║░░██║  ██║░░░░░███████╗██║░░██║░░░██║░░░██║██║░╚███║╚██████╔╝\n\
+  \  \
+   ╚═╝░░░░░░╚════╝░╚═╝░░╚═╝  ╚═╝░░░░░╚══════╝╚═╝░░╚═╝░░░╚═╝░░░╚═╝╚═╝░░╚══╝░╚═════╝░\n\
   \  \n\
   \  \
    ░██╗░░░░░░░██╗░█████╗░██████╗░██████╗░██╗░░░░░███████╗  ██████╗░░░░░█████╗░\n\
@@ -413,23 +445,64 @@ let rec play (guesses : (string * int) list list) dif letters =
             dif letters)
   else command_choice dif letters guesses input
 
+and restart dif letters =
+  ANSITerminal.print_string
+    [ ANSITerminal.Underlined ]
+    "\n\nStarting New Game\n\n";
+  correct_word := correctword letters;
+  penalties := 0;
+  hint_engine := HintEngine.init_engine !correct_word;
+  play [] dif letters
+
 (** [command_choice dif letters guesses input] executes a command in
     play that is not a valid word*)
 and command_choice dif letters guesses input =
-  if input = "r" then (
-    ANSITerminal.print_string
-      [ ANSITerminal.Underlined ]
-      "\n\nStarting New Game\n\n";
-    correct_word := correctword letters;
-    penalties := 0;
-    hint_engine := HintEngine.init_engine !correct_word;
-    play [] dif letters)
+  if input = "r" then restart dif letters
   else if input = "i" || input = "l" || input = "h" then (
     igCommand input;
     play guesses dif letters)
   else (
     print_endline (input ^ " is not a valid word");
     play guesses dif letters)
+
+and match_restart_quit i =
+  match i with
+  | "r" ->
+      choose_length ();
+      choose_difficulty ();
+      play [] !difficulty !length
+  | "q" -> print_endline thank_you_message
+  | _ ->
+      print_endline "Invalid input try again";
+      match_restart_quit i
+
+and end_screen guesses win () =
+  let final_score =
+    score (List.length guesses + 1) !length !penalties
+  in
+  if win then (
+    Leaderboard.write !length
+      ((get_board !length |> board_lst |> format)
+      ^ !name ^ " ," ^ final_score ^ ";");
+    print_endline
+      "\nCongratulations! You have guessed the correct word!";
+    print_endline ("Score: " ^ final_score);
+    print_endline "";
+    leaderboard := get_board !length |> board_lst |> pick_first_five;
+    print_leaderboard ();
+    print_endline
+      "\nWould you like to restart the game (r) or  quit (q) >  ";
+    let i = read_line () in
+    match_restart_quit i)
+  else (
+    print_endline "\nYou didn't guess the word :(";
+    print_endline ("The word was: " ^ !correct_word);
+    leaderboard := get_board !length |> board_lst |> pick_first_five;
+    print_leaderboard ();
+    print_endline
+      "\nWould you like to restart the game (r) or quit (q) >  ";
+    let i = read_line () in
+    match_restart_quit i)
 
 (** [start ()] represents the pre-game state. *)
 let start () =
