@@ -5,7 +5,6 @@
     @author Karim Pareja (kgp33)
     @author Joseph Tung (jt664) *)
 
-
 val hours_worked : int
-(** [hours_worked] is the number of hours we have collectively 
-    worked on this assignment. *)
+(** [hours_worked] is the number of hours we have collectively worked on
+    this assignment. *)
