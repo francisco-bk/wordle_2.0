@@ -298,18 +298,17 @@ let thank_you_message =
 let instructions =
   "\n\n\
   \     Instructions:\n\
-   Welcome to Wordle 2.0, the goal of the game is to find the secret "
-  ^ string_of_int !length
-  ^ " letter word.\n\
-    \ - To add a word into the game, type it into the terminal.\n\
-    \ - If the letter(s) in the word suggested is in the solution, but \
-     in the wrong position, it will come out as yellow.\n\
-    \ - If the letter(s) in the word suggested is in the solution, but \
-     in the correct position, it will come out as green.\n\
-    \ - If the letter(s) in the word suggested is not in the solution, \
-     it will come out as grey.\n\
-     The end goal is to get the secret word in 6 tries or less.\n\n\
-     Good Luck!\n\n"
+   Welcome to Wordle 2.0, the goal of the game is to find the secret \
+   word.\n\
+  \ - To add a word into the game, type it into the terminal.\n\
+  \ - If the letter(s) in the word suggested is in the solution, but \
+   in the wrong position, it will come out as yellow.\n\
+  \ - If the letter(s) in the word suggested is in the solution, but \
+   in the correct position, it will come out as green.\n\
+  \ - If the letter(s) in the word suggested is not in the solution, \
+   it will come out as grey.\n\
+   The end goal is to get the secret word in 6 tries or less.\n\n\
+   Good Luck!\n\n"
 
 let hint =
   "Get a (yellow) letter hint, (grey) letter hint, or (cancel)."
