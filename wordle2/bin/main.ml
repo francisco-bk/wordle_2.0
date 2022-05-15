@@ -1,6 +1,6 @@
 open Game
 open Processor
-open Randpick
+open RandPick
 open Load
 open Leaderboard
 
