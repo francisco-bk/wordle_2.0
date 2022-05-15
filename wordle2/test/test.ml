@@ -16,13 +16,17 @@ open Leaderboard
    [Leaderboard.ml]: Manually tested through the terminal. The
    leaderboard is printed after a game is complete in [make play]. Thus,
    we are able to verify its correctness by playtesting the game and
-   checking that the leaderboard updates correctly.
+   checking that the leaderboard updates correctly. We also used
+   automatic OUnit testing to guarantee that the leaderboard formats
+   correctly using black box testing with boundary and standard cases.
 
    [Load.ml]: Manually tested through the terminal. [Load.ml] provides
    the dictionary that the word to be guessed is pulled from during a
    game session. We are able to verify correctness by playing through
    the game and ensuring that the gameboard selects an answer with the
-   expected number of letters.
+   expected number of letters. We also used automatic OUnit black-box
+   testing with boundary and standard cases to ensure that the
+   formatting of the loaded dictionary is correct.
 
    [RandPick.ml]: Manually tested through the terminal. [RandPick.ml]
    chooses a specific word to be guessed by the player during the game
@@ -477,7 +481,8 @@ let format_test
     (name : string)
     (lst : string list)
     (expected_output : string) : test =
-  name >:: fun _ -> assert_equal expected_output (format lst)
+  name >:: fun _ ->
+  assert_equal expected_output (Leaderboard.format lst)
 
 let format_tests =
   [

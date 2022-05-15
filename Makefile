@@ -2,7 +2,7 @@ play:
 	OCAMLRUNPARAM=b dune exec wordle2/bin/main.exe
 
 test:
-	OCAMLRUNPARAM=b dune exec wordle2/test/wordle2.exe
+	OCAMLRUNPARAM=b dune exec wordle2/test/test.exe
 
 zip:
 	rm -f wordle2.zip
@@ -17,6 +17,9 @@ bisect: bisect-clean
 
 bisect-clean:
 	rm -rf _coverage bisect*.coverage
+
+docs:
+	dune build @doc
 
 doc:
 	dune build @doc
