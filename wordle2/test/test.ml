@@ -136,8 +136,9 @@ let processor_tests =
       "aaaaa" true string_of_bool ( = );
     test "in_dict [] and 'aaaaa'" (in_dict []) "aaaaa" false
       string_of_bool ( = );
-    test "in_dict ['aaaaa'] and 'aaaaa'" (in_dict [ "aaaaa" ]) "aaaaa"
-      true string_of_bool ( = );
+    test "in_dict ['aaaaa'] and 'aaaaa'"
+      (in_dict [ "aaaaa" ])
+      "aaaaa" true string_of_bool ( = );
     (* Testing color_list *)
     test "color_list 'llama' and 'lamal'" (color_list "llama") "lamal"
       [ 2; 1; 1; 1; 1 ] (pp_list Int.to_string) ( = );
@@ -156,113 +157,113 @@ let processor_tests =
       "ajdhouslof"
       [ 0; 0; 1; 1; 2; 0; 0; 1; 1; 0 ]
       (pp_list Int.to_string) ( = );
-    test "colorize_guess 'hello' and 'lolal'" (color_list "hello")
-      "lolal" [ 1; 1; 2; 0; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'bcnid' and 'hasuh'" (color_list "bcnid")
-      "hasuh" [ 0; 0; 0; 0; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess '' and ''" (color_list "") "" []
+    test "color_list 'hello' and 'lolal'" (color_list "hello") "lolal"
+      [ 1; 1; 2; 0; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list 'bcnid' and 'hasuh'" (color_list "bcnid") "hasuh"
+      [ 0; 0; 0; 0; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list '' and ''" (color_list "") "" []
       (pp_list Int.to_string) ( = );
-    test "colorize_guess 'baksjghsif' and 'hfiifodpsp'"
+    test "color_list 'baksjghsif' and 'hfiifodpsp'"
       (color_list "baksjghsif")
       "hfiifodpsp"
       [ 1; 1; 1; 0; 0; 0; 0; 0; 1; 0 ]
       (pp_list Int.to_string) ( = );
-    test "colorize_guess 'goods' and 'books'" (color_list "goods")
-      "books" [ 0; 2; 2; 0; 2 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'interact' and 'database'"
-      (color_list "interact") "database"
+    test "color_list 'goods' and 'books'" (color_list "goods") "books"
+      [ 0; 2; 2; 0; 2 ] (pp_list Int.to_string) ( = );
+    test "color_list 'interact' and 'database'" (color_list "interact")
+      "database"
       [ 0; 0; 2; 0; 0; 2; 0; 1 ]
       (pp_list Int.to_string) ( = );
-    test "colorize_guess 'agge' and 'podd'" (color_list "agge") "podd"
+    test "color_list 'agge' and 'podd'" (color_list "agge") "podd"
       [ 0; 0; 0; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'chicken' and 'baksasf'" (color_list "chicken")
+    test "color_list 'chicken' and 'baksasf'" (color_list "chicken")
       "baksasf" [ 0; 0; 1; 0; 0; 0; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'asdd' and 'afsf'" (color_list "asdd") "afsf"
+    test "color_list 'asdd' and 'afsf'" (color_list "asdd") "afsf"
       [ 2; 0; 1; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'afafasdd' and 'aadsafsf'"
-      (color_list "afafasdd") "aadsafsf"
+    test "color_list 'afafasdd' and 'aadsafsf'" (color_list "afafasdd")
+      "aadsafsf"
       [ 2; 1; 1; 1; 2; 1; 0; 1 ]
       (pp_list Int.to_string) ( = );
-    test "colorize_guess 'zxops' and 'sfiso'" (color_list "zxops")
-      "sfiso" [ 1; 0; 0; 0; 1 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'portal' and 'cockle'" (color_list "portal")
+    test "color_list 'zxops' and 'sfiso'" (color_list "zxops") "sfiso"
+      [ 1; 0; 0; 0; 1 ] (pp_list Int.to_string) ( = );
+    test "color_list 'portal' and 'cockle'" (color_list "portal")
       "cockle" [ 0; 2; 0; 0; 1; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'as' and 'ff'" (color_list "as") "ff" [ 0; 0 ]
+    test "color_list 'as' and 'ff'" (color_list "as") "ff" [ 0; 0 ]
       (pp_list Int.to_string) ( = );
-    test "colorize_guess 'hao' and 'sdg'" (color_list "hao") "sdg"
+    test "color_list 'hao' and 'sdg'" (color_list "hao") "sdg"
       [ 0; 0; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'qwiug' and 'qggif'" (color_list "qwiug")
-      "qggif" [ 2; 1; 0; 1; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'asdfghjkll' and 'aslfkgcksd'"
+    test "color_list 'qwiug' and 'qggif'" (color_list "qwiug") "qggif"
+      [ 2; 1; 0; 1; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list 'asdfghjkll' and 'aslfkgcksd'"
       (color_list "asdfghjkll")
       "aslfkgcksd"
       [ 2; 2; 1; 2; 0; 1; 0; 2; 0; 1 ]
       (pp_list Int.to_string) ( = );
-    test "colorize_guess 'lmvfp' and 'imvfi'" (color_list "lmvfp")
-      "imvfi" [ 0; 2; 2; 2; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'basud' and 'sdsad'" (color_list "basud")
-      "sdsad" [ 0; 0; 2; 1; 2 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'finoe' and 'fions'" (color_list "finoe")
-      "fions" [ 2; 2; 1; 1; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'adddd' and 'gsddd'" (color_list "adddd")
-      "gsddd" [ 0; 0; 2; 2; 2 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'dsino' and 'casin'" (color_list "dsino")
-      "casin" [ 0; 0; 1; 1; 1 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'dsasd' and 'async'" (color_list "dsasd")
-      "async" [ 1; 2; 0; 0; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'hjfksjfhsjak' and 'akfjskifowef'"
+    test "color_list 'lmvfp' and 'imvfi'" (color_list "lmvfp") "imvfi"
+      [ 0; 2; 2; 2; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list 'basud' and 'sdsad'" (color_list "basud") "sdsad"
+      [ 0; 0; 2; 1; 2 ] (pp_list Int.to_string) ( = );
+    test "color_list 'finoe' and 'fions'" (color_list "finoe") "fions"
+      [ 2; 2; 1; 1; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list 'adddd' and 'gsddd'" (color_list "adddd") "gsddd"
+      [ 0; 0; 2; 2; 2 ] (pp_list Int.to_string) ( = );
+    test "color_list 'dsino' and 'casin'" (color_list "dsino") "casin"
+      [ 0; 0; 1; 1; 1 ] (pp_list Int.to_string) ( = );
+    test "color_list 'dsasd' and 'async'" (color_list "dsasd") "async"
+      [ 1; 2; 0; 0; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list 'hjfksjfhsjak' and 'akfjskifowef'"
       (color_list "hjfksjfhsjak")
       "akfjskifowef"
       [ 1; 1; 2; 1; 2; 1; 0; 1; 0; 0; 0; 0 ]
       (pp_list Int.to_string) ( = );
-    test "colorize_guess 'bhds' and 'asid'" (color_list "bhds") "asid"
+    test "color_list 'bhds' and 'asid'" (color_list "bhds") "asid"
       [ 0; 1; 0; 1 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'vujgi' and 'funci'" (color_list "vujgi")
-      "funci" [ 0; 2; 0; 0; 2 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'gr' and 'gu'" (color_list "gr") "gu" [ 2; 0 ]
+    test "color_list 'vujgi' and 'funci'" (color_list "vujgi") "funci"
+      [ 0; 2; 0; 0; 2 ] (pp_list Int.to_string) ( = );
+    test "color_list 'gr' and 'gu'" (color_list "gr") "gu" [ 2; 0 ]
       (pp_list Int.to_string) ( = );
-    test "colorize_guess 'testing' and 'testing'" (color_list "testing")
+    test "color_list 'testing' and 'testing'" (color_list "testing")
       "testing" [ 2; 2; 2; 2; 2; 2; 2 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'wordy' and 'tubes'" (color_list "wordy")
-      "tubes" [ 0; 0; 0; 0; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'fling' and 'crane'" (color_list "fling")
-      "crane" [ 0; 0; 0; 2; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'plane' and 'stroe'" (color_list "plane")
-      "stroe" [ 0; 0; 0; 0; 2 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'helps' and 'money'" (color_list "helps")
-      "money" [ 0; 0; 0; 1; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'jen' and 'ben'" (color_list "jen") "ben"
+    test "color_list 'wordy' and 'tubes'" (color_list "wordy") "tubes"
+      [ 0; 0; 0; 0; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list 'fling' and 'crane'" (color_list "fling") "crane"
+      [ 0; 0; 0; 2; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list 'plane' and 'stroe'" (color_list "plane") "stroe"
+      [ 0; 0; 0; 0; 2 ] (pp_list Int.to_string) ( = );
+    test "color_list 'helps' and 'money'" (color_list "helps") "money"
+      [ 0; 0; 0; 1; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list 'jen' and 'ben'" (color_list "jen") "ben"
       [ 0; 2; 2 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'utop' and 'tops'" (color_list "utop") "tops"
+    test "color_list 'utop' and 'tops'" (color_list "utop") "tops"
       [ 1; 1; 1; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'boble' and 'gogle'" (color_list "boble")
-      "gogle" [ 0; 2; 0; 2; 2 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'array' and 'hello'" (color_list "array")
-      "hello" [ 0; 0; 0; 0; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'cindy' and 'franc'" (color_list "cindy")
-      "franc" [ 0; 0; 0; 1; 1 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'aoind' and 'guiwu'" (color_list "aoind")
-      "guiwu" [ 0; 0; 2; 0; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'finof' and 'dinos'" (color_list "finof")
-      "dinos" [ 0; 2; 2; 2; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'woufh' and 'fownf'" (color_list "woufh")
-      "fownf" [ 1; 2; 1; 0; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'champ' and 'funel'" (color_list "champ")
-      "funel" [ 0; 0; 0; 0; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'snale' and 'snake'" (color_list "snale")
-      "snake" [ 2; 2; 2; 0; 2 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'sinf' and 'sifn'" (color_list "sinf") "sifn"
+    test "color_list 'boble' and 'gogle'" (color_list "boble") "gogle"
+      [ 0; 2; 0; 2; 2 ] (pp_list Int.to_string) ( = );
+    test "color_list 'array' and 'hello'" (color_list "array") "hello"
+      [ 0; 0; 0; 0; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list 'cindy' and 'franc'" (color_list "cindy") "franc"
+      [ 0; 0; 0; 1; 1 ] (pp_list Int.to_string) ( = );
+    test "color_list 'aoind' and 'guiwu'" (color_list "aoind") "guiwu"
+      [ 0; 0; 2; 0; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list 'finof' and 'dinos'" (color_list "finof") "dinos"
+      [ 0; 2; 2; 2; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list 'woufh' and 'fownf'" (color_list "woufh") "fownf"
+      [ 1; 2; 1; 0; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list 'champ' and 'funel'" (color_list "champ") "funel"
+      [ 0; 0; 0; 0; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list 'snale' and 'snake'" (color_list "snale") "snake"
+      [ 2; 2; 2; 0; 2 ] (pp_list Int.to_string) ( = );
+    test "color_list 'sinf' and 'sifn'" (color_list "sinf") "sifn"
       [ 2; 2; 1; 1 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'asi' and 'fio'" (color_list "asi") "fio"
+    test "color_list 'asi' and 'fio'" (color_list "asi") "fio"
       [ 0; 1; 0 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'since' and 'loops'" (color_list "since")
-      "loops" [ 0; 0; 0; 0; 1 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'grey' and 'gray'" (color_list "grey") "gray"
+    test "color_list 'since' and 'loops'" (color_list "since") "loops"
+      [ 0; 0; 0; 0; 1 ] (pp_list Int.to_string) ( = );
+    test "color_list 'grey' and 'gray'" (color_list "grey") "gray"
       [ 2; 2; 0; 2 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'grey' and 'gray'" (color_list "grey") "gray"
+    test "color_list 'grey' and 'gray'" (color_list "grey") "gray"
       [ 2; 2; 0; 2 ] (pp_list Int.to_string) ( = );
-    test "colorize_guess 'soind' and 'sdima'" (color_list "soind")
-      "sdima" [ 2; 1; 2; 0; 0 ] (pp_list Int.to_string) ( = );
+    test "color_list 'soind' and 'sdima'" (color_list "soind") "sdima"
+      [ 2; 1; 2; 0; 0 ] (pp_list Int.to_string) ( = );
     (* Testing colorize_guess *)
     test "colorize_guess 2 letters: 'hi' and 'he'" (colorize_guess "hi")
       "he"
