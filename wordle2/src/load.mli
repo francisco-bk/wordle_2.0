@@ -16,3 +16,5 @@ val load : int -> in_channel
 val dict_lst : in_channel -> string list
 (** [dict_lst file] converts [file] into a string list that contains all
     words*)
+
+val str_to_lst : string -> string list
