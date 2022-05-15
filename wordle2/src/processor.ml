@@ -1,5 +1,5 @@
 let format s = s |> String.uppercase_ascii |> String.trim
-let are_equal answer guess = answer = guess
+let are_equal answer guess = format answer = format guess
 
 let in_dict (dict : string list) (word : string) : bool =
   let whats_left = dict |> List.filter (fun x -> x = word) in

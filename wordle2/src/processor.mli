@@ -1,4 +1,7 @@
-(** Processing of words in various ways. *)
+(** Processing of words for display in the terminal.
+
+    This module handles the parsing of guesses inputted by users and
+    colorizes guessed words based on an answer. *)
 
 val format : string -> string
 (** [format s] cleans [s] by capitalizing all letters and removing
@@ -7,9 +10,8 @@ val format : string -> string
 val are_equal : string -> string -> bool
 (** [are_equal answer guess] is [true] if [answer] represents the same
     word as [guess] and [false] otherwise. They are the same word if
-    both contain the same sequence of letters in the same order.
-    Requires: [s1] and [s2] contain only lowercase letters with no
-    whitespace.*)
+    both contain the same sequence of letters in the same order,
+    invariant to white space and capitalization. *)
 
 val in_dict : string list -> string -> bool
 (** [in_dict s] is [true] if [s] is a word in the loaded dictionary and

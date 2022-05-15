@@ -42,8 +42,9 @@ let leaderboard = ref []
     itself to a new engine. *)
 let hint_engine : HintEngine.t ref = ref (HintEngine.init_engine "")
 
-(** [correctword length] picks the correct word bsaed on [length]*)
-let correctword (length : int) : string = pick (dict_f length)
+(** [choose_correct_word length] picks the correct word based on
+    [length]. *)
+let choose_correct_word (length : int) : string = pick (dict_f length)
 
 let rec empty_row column : string =
   if column = 0 then "|" else "|   " ^ empty_row (column - 1)
@@ -154,14 +155,15 @@ let in_check str : bool =
   in_dict !dict str && str != "i" && str != "l" && str != "h"
   && str != "r"
 
-let print_HintEngine guess =
+let print_hint_engine guess =
   let colored_guess = Processor.colorize_guess !correct_word guess in
   print_word colored_guess
 
-let rec ab input =
+let rec lst_to_string input =
   match input with
   | [] -> ""
-  | (a, b) :: t -> "(" ^ a ^ " : " ^ string_of_int b ^ "); " ^ ab t
+  | (a, b) :: t ->
+      "(" ^ a ^ " : " ^ string_of_int b ^ "); " ^ lst_to_string t
 
 let print_leaderboard () : unit =
   let length = List.length !leaderboard in
@@ -392,7 +394,7 @@ let rec choose_length () =
   try
     let x = int_of_string (read_line ()) in
     if 1 < x && x < 11 then (
-      correct_word := correctword x;
+      correct_word := choose_correct_word x;
       length := x;
       dict := dict_f x;
       hint_engine := HintEngine.init_engine !correct_word)
@@ -449,7 +451,7 @@ and restart dif letters =
   ANSITerminal.print_string
     [ ANSITerminal.Underlined ]
     "\n\nStarting New Game\n\n";
-  correct_word := correctword letters;
+  correct_word := choose_correct_word letters;
   penalties := 0;
   hint_engine := HintEngine.init_engine !correct_word;
   play [] dif letters

@@ -1,4 +1,9 @@
-(** Handles the leaderboard feature of the game. *)
+(** Handles the leaderboard feature of the game.
+
+    This module is the interface between the leaderboard text files in
+    the data folder and OCaml. It is able to read the text files to
+    display in the terminal, and also write to the text files based on a
+    terminal player's score. *)
 
 val get_board : int -> in_channel
 (** [get_board difficulty] loads the leaderboard associated with
