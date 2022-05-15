@@ -122,8 +122,9 @@ let processor_tests =
       "aaaaa" true string_of_bool ( = );
     test "in_dict [] and 'aaaaa'" (in_dict []) "aaaaa" false
       string_of_bool ( = );
-    test "in_dict ['aaaaa'] and 'aaaaa'" (in_dict [ "aaaaa" ]) "aaaaa"
-      true string_of_bool ( = );
+    test "in_dict ['aaaaa'] and 'aaaaa'"
+      (in_dict [ "aaaaa" ])
+      "aaaaa" true string_of_bool ( = );
     (* Testing color_list *)
     test "color_list 'llama' and 'lamal'" (color_list "llama") "lamal"
       [ 2; 1; 1; 1; 1 ] (pp_list Int.to_string) ( = );
@@ -270,6 +271,28 @@ let parse_dict_tests =
       [ "a"; "b" ] (pp_list i) ( = );
     test "parse ['a';' b '] is ['a';'b']" parse_dict [ "a"; " b " ]
       [ "a"; "b" ] (pp_list i) ( = );
+    test "parse test" parse_dict [ "a      "; " b " ] [ "a"; "b" ]
+      (pp_list i) ( = );
+    test "parse test" parse_dict [ "      a"; " b " ] [ "a"; "b" ]
+      (pp_list i) ( = );
+    test "parse test" parse_dict
+      [ "a    "; " b       " ]
+      [ "a"; "b" ] (pp_list i) ( = );
+    test "parse test" parse_dict [ "a a"; " b " ] [ "a a"; "b" ]
+      (pp_list i) ( = );
+    test "parse test" parse_dict [ "a   "; " b b" ] [ "a"; "b b" ]
+      (pp_list i) ( = );
+    test "parse test" parse_dict [ "a a a"; " b " ] [ "a a a"; "b" ]
+      (pp_list i) ( = );
+    test "parse test" parse_dict [ "a a a a"; " b " ] [ "a a a a"; "b" ]
+      (pp_list i) ( = );
+    test "parse test" parse_dict
+      [ "a a a a       "; " b " ]
+      [ "a a a a"; "b" ] (pp_list i) ( = );
+    test "parse test" parse_dict [ ""; " b " ] [ ""; "b" ] (pp_list i)
+      ( = );
+    test "parse test" parse_dict [ "1   1    "; " b " ] [ "1   1"; "b" ]
+      (pp_list i) ( = );
   ]
 
 let choose_word_length_tests =
@@ -288,10 +311,53 @@ let choose_word_length_tests =
       [ "a"; "ab" ] [ "ab" ] (pp_list i) ( = );
     test "choose 3 ['a';'ab'] is []" (choose_word_length 3)
       [ "a"; "ab" ] [] (pp_list i) ( = );
+    test "choose 4 ['a';'ab'] is []" (choose_word_length 4)
+      [ "a"; "ab" ] [] (pp_list i) ( = );
+    test "choose 5 ['a';'ab'] is []" (choose_word_length 5)
+      [ "a"; "ab" ] [] (pp_list i) ( = );
+    test "choose 1 ['a';'b'] is ['a';'b']" (choose_word_length 1)
+      [ "a"; "b" ] [ "a"; "b" ] (pp_list i) ( = );
+    test "choose 2 ['a';'b'] is []" (choose_word_length 2) [ "a"; "b" ]
+      [] (pp_list i) ( = );
+    test "choose 1 ['';''] is []" (choose_word_length 1) [ ""; "" ] []
+      (pp_list i) ( = );
+    test "choose 0 ['';''] is ['';'']" (choose_word_length 0) [ ""; "" ]
+      [ ""; "" ] (pp_list i) ( = );
+    test "choose 0 ['a';''] is ['']" (choose_word_length 0) [ "a"; "" ]
+      [ "" ] (pp_list i) ( = );
+    test "choose 1000 ['a';'b'] is []"
+      (choose_word_length 1000)
+      [ "a"; "b" ] [] (pp_list i) ( = );
+  ]
+
+let str_to_lst_tests =
+  [
+    test "str_to_lst test" str_to_lst "a,a" [ "a"; "a" ] (pp_list i)
+      ( = );
+    test "str_to_lst test" str_to_lst "a,a,a" [ "a"; "a"; "a" ]
+      (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst "" [ "" ] (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst "a,a,a,a" [ "a"; "a"; "a"; "a" ]
+      (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst "a,b" [ "a"; "b" ] (pp_list i)
+      ( = );
+    test "str_to_lst test" str_to_lst "a" [ "a" ] (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst "a," [ "a"; "" ] (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst "," [ ""; "" ] (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst ",," [ ""; ""; "" ] (pp_list i)
+      ( = );
+    test "str_to_lst test" str_to_lst "a,a,b" [ "a"; "a"; "b" ]
+      (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst "a,a," [ "a"; "a"; "" ]
+      (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst ",a" [ ""; "a" ] (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst ",a,a," [ ""; "a"; "a"; "" ]
+      (pp_list i) ( = );
   ]
 
 let load_tests =
-  List.flatten [ parse_dict_tests; choose_word_length_tests ]
+  List.flatten
+    [ parse_dict_tests; choose_word_length_tests; str_to_lst_tests ]
 
 (*****************************************************************)
 (* tests for the HintEngine module *)
