@@ -26,5 +26,5 @@ val pick_first_five : string list -> (string * int) list
     five player/score pairs in [board] *)
 
 val format : string list -> string
-(** [format board] formats the output of [board] into a repeating string
-    with syntax "name,score;"*)
+(** [format board] formats the output of [board_lst] into a repeating
+    string with syntax "name,score;"*)

@@ -3,6 +3,7 @@ open Game
 open Processor
 open Load
 open HintEngine
+open Leaderboard
 
 (*****************************************************************)
 (* TEST PLAN *)
@@ -103,14 +104,16 @@ let test_exc (name : string) exc input : test =
 let processor_tests =
   [
     (* Testing format *)
-    test "format '   hello'" format "   hello" "HELLO"
+    test "format '   hello'" Processor.format "   hello" "HELLO"
       (fun x -> x)
       ( = );
-    test "format ''" format "" "" (fun x -> x) ( = );
-    test "format '   hElLo  '" format "   hElLo  " "HELLO"
+    test "format ''" Processor.format "" "" (fun x -> x) ( = );
+    test "format '   hElLo  '" Processor.format "   hElLo  " "HELLO"
       (fun x -> x)
       ( = );
-    test "format 'HELLO'" format "HELLO" "HELLO" (fun x -> x) ( = );
+    test "format 'HELLO'" Processor.format "HELLO" "HELLO"
+      (fun x -> x)
+      ( = );
     (* Testing are_equal *)
     test "are_equal 'hello' and 'hello'" (are_equal "hello") "hello"
       true string_of_bool ( = );
@@ -353,12 +356,226 @@ let str_to_lst_tests =
     test "str_to_lst test" str_to_lst ",a" [ ""; "a" ] (pp_list i) ( = );
     test "str_to_lst test" str_to_lst ",a,a," [ ""; "a"; "a"; "" ]
       (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst "   ,a,a, " [ ""; "a"; "a"; "" ]
+      (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst ",a,a  ," [ ""; "a"; "a"; "" ]
+      (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst ",    a,a," [ ""; "a"; "a"; "" ]
+      (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst "    ,a    ,a    ,   "
+      [ ""; "a"; "a"; "" ] (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst ";" [ ";" ] (pp_list i) ( = );
+    test "str_to_lst test" str_to_lst "???" [ "???" ] (pp_list i) ( = );
   ]
 
 let load_tests =
   List.flatten
     [ parse_dict_tests; choose_word_length_tests; str_to_lst_tests ]
 
+(*****************************************************************)
+(* tests for the Leaderboard module *)
+(*****************************************************************)
+
+let check_board_tests =
+  [
+    test "check_board test" check_board [] false string_of_bool ( = );
+    test "check_board test" check_board [ "" ] true string_of_bool ( = );
+    test "check_board test" check_board [ 1 ] true string_of_bool ( = );
+    test "check_board test" check_board [ "hey"; "hey" ] true
+      string_of_bool ( = );
+    test "check_board test" check_board [ 1; 2 ] true string_of_bool
+      ( = );
+    test "check_board test" check_board [ [] ] true string_of_bool ( = );
+    test "check_board test" check_board [ []; []; [] ] true
+      string_of_bool ( = );
+    test "check_board test" check_board [ 1 ] true string_of_bool ( = );
+    test "check_board test" check_board [ () ] true string_of_bool ( = );
+    test "check_board test" check_board [ (); () ] true string_of_bool
+      ( = );
+  ]
+
+let pickff_test
+    (name : string)
+    (lst : string list)
+    (expected_output : (string * int) list) : test =
+  name >:: fun _ -> assert_equal expected_output (pick_first_five lst)
+
+let pickff_tests =
+  [
+    pickff_test "pick_first_five test" [ "a "; "1" ] [ ("a ", 1) ];
+    pickff_test "pick_first_five test with only one pair" [ "aa "; "1" ]
+      [ ("aa ", 1) ];
+    pickff_test "pick_first_five test with only one pair" [ "a "; "2" ]
+      [ ("a ", 2) ];
+    pickff_test "pick_first_five test with only one pair" [ "a "; "12" ]
+      [ ("a ", 12) ];
+    pickff_test "pick_first_five test with only one pair" [ "ab "; "1" ]
+      [ ("ab ", 1) ];
+    pickff_test "pick_first_five test with only one pair"
+      [ "a "; "-1000" ]
+      [ ("a ", -1000) ];
+    pickff_test
+      "pick_first_five test with two pairs, each has a unique trait"
+      [ "a "; "1"; "b "; "2" ]
+      [ ("b ", 2); ("a ", 1) ];
+    pickff_test
+      "pick_first_five test with two pairs, each has a unique trait"
+      [ "a "; "2"; "b "; "3" ]
+      [ ("b ", 3); ("a ", 2) ];
+    pickff_test
+      "pick_first_five test with two pairs, each has a unique trait"
+      [ "b "; "-10"; "a "; "2" ]
+      [ ("a ", 2); ("b ", -10) ];
+    pickff_test
+      "pick_first_five test with two pairs, each has a unique trait"
+      [ "a "; "99"; "b "; "100" ]
+      [ ("b ", 100); ("a ", 99) ];
+    pickff_test
+      "pick_first_five test with two pairs, each has a unique trait"
+      [ "a "; "-10"; "b "; "-9" ]
+      [ ("b ", -9); ("a ", -10) ];
+  ]
+
+let pickff_tests' =
+  [
+    pickff_test
+      "pick_first_five test with two pairs, each has a unique trait"
+      [ "a "; "11"; "b "; "20" ]
+      [ ("b ", 20); ("a ", 11) ];
+    pickff_test "pick_first_five test with two pairs, order is random"
+      [ "a "; "2"; "b "; "1" ]
+      [ ("a ", 2); ("b ", 1) ];
+    pickff_test "pick_first_five test with two pairs, order is random"
+      [ "a "; "3"; "b "; "1" ]
+      [ ("a ", 3); ("b ", 1) ];
+    pickff_test "pick_first_five test with two pairs, order is random"
+      [ "a "; "2"; "b "; "-1" ]
+      [ ("a ", 2); ("b ", -1) ];
+    pickff_test
+      "pick_first_five test with multiple pairs, order is random"
+      [ "a "; "2"; "b "; "1"; "c "; "3" ]
+      [ ("c ", 3); ("a ", 2); ("b ", 1) ];
+    pickff_test
+      "pick_first_five test with multiple pairs, order is random"
+      [ "a "; "1"; "b "; "2"; "c "; "3" ]
+      [ ("c ", 3); ("b ", 2); ("a ", 1) ];
+    pickff_test
+      "pick_first_five test with multiple pairs, order is random"
+      [ "a "; "200"; "b "; "1"; "c "; "3" ]
+      [ ("a ", 200); ("c ", 3); ("b ", 1) ];
+    pickff_test
+      "pick_first_five test with multiple pairs, order is random"
+      [ "a "; "-22"; "b "; "1"; "c "; "3" ]
+      [ ("c ", 3); ("b ", 1); ("a ", -22) ];
+    pickff_test
+      "pick_first_five test with multiple pairs, order is random"
+      [ "a "; "0"; "b "; "-11"; "c "; "-10" ]
+      [ ("a ", 0); ("c ", -10); ("b ", -11) ];
+  ]
+
+let format_test
+    (name : string)
+    (lst : string list)
+    (expected_output : string) : test =
+  name >:: fun _ -> assert_equal expected_output (format lst)
+
+let format_tests =
+  [
+    format_test
+      "format test with just one pair, each with a unique trait"
+      [ "a "; "1" ] "a ,1;";
+    format_test
+      "format test with just one pair, each with a unique trait"
+      [ "a "; "2" ] "a ,2;";
+    format_test
+      "format test with just one pair, each with a unique trait"
+      [ "b "; "1" ] "b ,1;";
+    format_test
+      "format test with just one pair, each with a unique trait"
+      [ "aba "; "1" ] "aba ,1;";
+    format_test
+      "format test with just one pair, each with a unique trait"
+      [ "aa "; "1" ] "aa ,1;";
+    format_test
+      "format test with just one pair, each with a unique trait"
+      [ "a "; "100" ] "a ,100;";
+    format_test
+      "format test with just one pair, each with a unique trait"
+      [ "a "; "-100" ] "a ,-100;";
+    format_test
+      "format test with just one pair, each with a unique trait"
+      [ "a1 "; "0" ] "a1 ,0;";
+    format_test
+      "format test with just one pair, each with a unique trait"
+      [ "a1 "; "1" ] "a1 ,1;";
+    format_test
+      "format test with just one pair, each with a unique trait"
+      [ "a100 "; "1" ] "a100 ,1;";
+  ]
+
+let format_tests' =
+  [
+    format_test
+      "format test with two pairs, order is random and values are \
+       representative"
+      [ "a "; "1"; "b "; "2" ]
+      "a ,1;b ,2;";
+    format_test
+      "format test with two pairs, order is random and values are \
+       representative"
+      [ "a "; "100"; "b "; "200" ]
+      "a ,100;b ,200;";
+    format_test
+      "format test with two pairs, order is random and values are \
+       representative"
+      [ "ab "; "1"; "ab "; "2" ]
+      "aa ,1;ab ,2;";
+    format_test
+      "format test with two pairs, order is random and values are \
+       representative"
+      [ "ab "; "1"; "ba "; "2" ]
+      "ab ,1;ba ,2;";
+    format_test
+      "format test with two pairs, order is random and values are \
+       representative"
+      [ "a "; "2"; "b "; "2" ]
+      "a ,2;b ,2;";
+    format_test
+      "format test with two pairs, order is random and values are \
+       representative"
+      [ "a "; "-1"; "b "; "20" ]
+      "a ,-1;b ,20;";
+    format_test
+      "format test with two pairs, order is random and values are \
+       representative"
+      [ "aaaa "; "1"; "aaaaa "; "2" ]
+      "aaaa ,1;aaaaa ,2;";
+    format_test
+      "format test with two pairs, order is random and values are \
+       representative"
+      [ "a3a "; "1"; "a3a "; "2" ]
+      "a3a ,1;a3a ,2;";
+    format_test
+      "format test with two pairs, order is random and values are \
+       representative"
+      [ "a "; "1000"; "b "; "2000" ]
+      "a ,1000;b ,2000;";
+    format_test
+      "format test with two pairs, order is random and values are \
+       representative"
+      [ "a "; "-1"; "b "; "-2" ]
+      "a ,-1;b ,-2;";
+  ]
+
+let leaderboard_tests =
+  List.flatten
+    [
+      check_board_tests;
+      pickff_tests;
+      pickff_tests';
+      format_tests;
+      format_tests';
+    ]
 (*****************************************************************)
 (* tests for the HintEngine module *)
 (*****************************************************************)
@@ -730,6 +947,7 @@ let hint_tests =
 
 let suite =
   "test suite for Wordle 2.0"
-  >::: List.flatten [ processor_tests; load_tests; hint_tests ]
+  >::: List.flatten
+         [ processor_tests; load_tests; hint_tests; leaderboard_tests ]
 
 let _ = run_test_tt_main suite
