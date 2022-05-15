@@ -16,13 +16,17 @@ open Leaderboard
    [Leaderboard.ml]: Manually tested through the terminal. The
    leaderboard is printed after a game is complete in [make play]. Thus,
    we are able to verify its correctness by playtesting the game and
-   checking that the leaderboard updates correctly.
+   checking that the leaderboard updates correctly. We also used
+   automatic OUnit testing to guarantee that the leaderboard formats
+   correctly using black box testing with boundary and standard cases.
 
    [Load.ml]: Manually tested through the terminal. [Load.ml] provides
    the dictionary that the word to be guessed is pulled from during a
    game session. We are able to verify correctness by playing through
    the game and ensuring that the gameboard selects an answer with the
-   expected number of letters.
+   expected number of letters. We also used automatic OUnit black-box
+   testing with boundary and standard cases to ensure that the
+   formatting of the loaded dictionary is correct.
 
    [RandPick.ml]: Manually tested through the terminal. [RandPick.ml]
    chooses a specific word to be guessed by the player during the game
@@ -477,7 +481,8 @@ let format_test
     (name : string)
     (lst : string list)
     (expected_output : string) : test =
-  name >:: fun _ -> assert_equal expected_output (format lst)
+  name >:: fun _ ->
+  assert_equal expected_output (Leaderboard.format lst)
 
 let format_tests =
   [
@@ -724,28 +729,24 @@ let hint_tests =
     (* Test-Run 1 state 2 - guess "yea" *)
     test2
       "guessing \"yea\" after taking 3 yellow hints from engine with \
-       answer\n\
-      \  \"yes\" should have unguessed keyboard containing all letters \
-       but \"y\",\n\
-      \  \"e\", \"s\", and \"a\""
+       answer \"yes\" should have unguessed keyboard containing all \
+       letters but \"y\", \"e\", \"s\", and \"a\""
       (yes_engine_st2 |> unguessed_letters)
       alphabet_4rm_tr1 (pp_list i) cmp_list;
     test2
       "guessing \"yea\" after taking 3 yellow hints from engine with \
-       answer\n\
-      \  \"yes\" should have grey keyboard containing \"a\""
+       answer \"yes\" should have grey keyboard containing \"a\""
       (yes_engine_st2 |> grey_letters)
       [ "a" ] (pp_list i) cmp_list;
     test2
       "guessing \"yea\" after taking 3 yellow hints from engine with \
-       answer\n\
-      \  \"yes\" should have yellow keyboard containing \"s\""
+       answer \"yes\" should have yellow keyboard containing \"s\""
       (yes_engine_st2 |> yellow_letters)
       [ "s" ] (pp_list i) cmp_list;
     test2
       "guessing \"yea\" after taking 3 yellow hints from engine with \
-       answer\n\
-      \  \"yes\" should have green keyboard containing \"y\" and \"e\""
+       answer \"yes\" should have green keyboard containing \"y\" and \
+       \"e\""
       (yes_engine_st2 |> green_letters)
       [ "y"; "e" ] (pp_list i) cmp_list;
     (*************************)
@@ -760,8 +761,7 @@ let hint_tests =
       ( = );
     test2
       "initial engine with answer \"bee\" has an unguessed keyboard of \
-       all\n\
-      \  26 letters"
+       all 26 letters"
       (bee_engine_st0 |> unguessed_letters)
       alphabet (pp_list i) cmp_list;
     test2
@@ -814,10 +814,8 @@ let hint_tests =
       5 string_of_int ( = );
     test2
       "After getting grey hint after guessing four grey letters in \
-       engine with\n\
-      \  answer \"bee\", combining the grey and unguessed keyboard \
-       should result in the\n\
-      \  full alphabet."
+       engine with answer \"bee\", combining the grey and unguessed \
+       keyboard should result in the full alphabet."
       ((bee_engine_st2 |> grey_letters)
       @ (bee_engine_st2 |> unguessed_letters))
       alphabet (pp_list i) cmp_list;
@@ -834,108 +832,94 @@ let hint_tests =
     (* Test-Run 2 state 3 - guess "eye" *)
     test2
       "guessing \"eye\" after getting grey hint and guessing four grey \
-       letters\n\
-      \  in engine with answer \"bee\" should have unguessed keyboard \
-       of size <=21"
+       letters in engine with answer \"bee\" should have unguessed \
+       keyboard of size <=21"
       (bee_engine_st3 |> unguessed_letters |> List.length)
       21 string_of_int ( >= );
     test2
       "guessing \"eye\" after getting grey hint and guessing four grey \
-       letters\n\
-      \  in engine with answer \"bee\" should have grey keyboard of \
-       size >= 5"
+       letters in engine with answer \"bee\" should have grey keyboard \
+       of size >= 5"
       (bee_engine_st3 |> grey_letters |> List.length)
       5 string_of_int ( <= );
     test2
       "guessing \"eye\" after getting grey hint and guessing four grey \
-       letters\n\
-      \  in engine with answer \"bee\" should have empty yellow \
+       letters in engine with answer \"bee\" should have empty yellow \
        keyboard"
       (bee_engine_st3 |> yellow_letters)
       [] (pp_list i) cmp_list;
     test2
       "guessing \"eye\" after getting grey hint and guessing four grey \
-       letters\n\
-      \  in engine with answer \"bee\" should have empty green keyboard"
+       letters in engine with answer \"bee\" should have empty green \
+       keyboard"
       (bee_engine_st3 |> green_letters)
       [ "e" ] (pp_list i) cmp_list;
     (* Test-Run 2 state 4 - get one yellow hint *)
     test2
       "getting one yellow hint after guessing \"eye\", getting grey \
-       hint, and\n\
-      \  guessing four grey letters in engine with answer \"bee\" \
-       should have unguessed\n\
-      \  keyboard 1 smaller than in state 3"
+       hint, and guessing four grey letters in engine with answer \
+       \"bee\" should have unguessed keyboard 1 smaller than in state \
+       3"
       (bee_engine_st4 |> unguessed_letters |> List.length)
       ((bee_engine_st3 |> unguessed_letters |> List.length) - 1)
       string_of_int ( = );
     test2
       "getting one yellow hint after guessing \"eye\", getting grey \
-       hint, and\n\
-      \  guessing four grey letters in engine with answer \"bee\" \
-       should have same grey\n\
-      \  keyboard as in state 3"
+       hint, and guessing four grey letters in engine with answer \
+       \"bee\" should have same grey keyboard as in state 3"
       (bee_engine_st4 |> grey_letters)
       (bee_engine_st3 |> grey_letters)
       (pp_list i) cmp_list;
     test2
       "getting one yellow hint after guessing \"eye\", getting grey \
-       hint, and\n\
-      \  guessing four grey letters in engine with answer \"bee\" \
-       should have yellow\n\
-      \  keyboard with \"b\""
+       hint, and guessing four grey letters in engine with answer \
+       \"bee\" should have yellow keyboard with \"b\""
       (bee_engine_st4 |> yellow_letters)
       [ "b" ] (pp_list i) cmp_list;
     test2
       "getting one yellow hint after guessing \"eye\", getting grey \
-       hint and \n\
-      \    getting four grey letters\n\
-      \  in engine with answer \"bee\" should have empty green keyboard"
+       hint and getting four grey letters in engine with answer \
+       \"bee\" should have empty green keyboard"
       (bee_engine_st4 |> green_letters)
       [ "e" ] (pp_list i) cmp_list;
     (* Test-Run 2 state 5 - get another yellow hint *)
     test2
       "getting a yellow hint after getting a yellow hint, guessing \
-       \"eye\",\n\
-      \  getting grey hint and getting four grey letters in engine \
-       with answer \"bee\"\n\
-      \  should have the same unguessed keyboard as state 4"
+       \"eye\", getting grey hint and getting four grey letters in \
+       engine with answer \"bee\" should have the same unguessed \
+       keyboard as state 4"
       (bee_engine_st5 |> unguessed_letters)
       (bee_engine_st4 |> unguessed_letters)
       (pp_list i) cmp_list;
     test2
       "getting a yellow hint after getting a yellow hint, guessing \
-       \"eye\",\n\
-      \  getting grey hint and getting four grey letters in engine \
-       with answer \"bee\"\n\
-      \  should have the same grey keyboard as state 4"
+       \"eye\", getting grey hint and getting four grey letters in \
+       engine with answer \"bee\" should have the same grey keyboard \
+       as state 4"
       (bee_engine_st5 |> grey_letters)
       (bee_engine_st4 |> grey_letters)
       (pp_list i) cmp_list;
     test2
       "getting a yellow hint after getting a yellow hint, guessing \
-       \"eye\",\n\
-      \  getting grey hint and getting four grey letters in engine \
-       with answer \"bee\"\n\
-      \  should have the same yellow keyboard as state 4"
+       \"eye\", getting grey hint and getting four grey letters in \
+       engine with answer \"bee\" should have the same yellow keyboard \
+       as state 4"
       (bee_engine_st5 |> yellow_letters)
       (bee_engine_st4 |> yellow_letters)
       (pp_list i) cmp_list;
     test2
       "getting a yellow hint after getting a yellow hint, guessing \
-       \"eye\",\n\
-      \  getting grey hint and getting four grey letters in engine \
-       with answer \"bee\"\n\
-      \  should have the same green keyboard as state 4"
+       \"eye\", getting grey hint and getting four grey letters in \
+       engine with answer \"bee\" should have the same green keyboard \
+       as state 4"
       (bee_engine_st5 |> green_letters)
       (bee_engine_st4 |> green_letters)
       (pp_list i) cmp_list;
     test2
       "getting a yellow hint after getting a yellow hint, guessing \
-       \"eye\",\n\
-      \  getting grey hint and getting four grey letters in engine \
-       with answer \"bee\"\n\
-      \  should return an invalid hint" hint_bee_engine_st5 None
+       \"eye\", getting grey hint and getting four grey letters in \
+       engine with answer \"bee\" should return an invalid hint"
+      hint_bee_engine_st5 None
       (fun x ->
         match x with
         | Some _ -> "Some hint"
