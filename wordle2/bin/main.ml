@@ -135,7 +135,7 @@ let rec make_grid row column (guesses : (string * int) list list) : unit
     [g] guesses representing the guesses so far. Precondition : length
     of guesses is smaller then dif*)
 let make_game dif letters guesses : unit =
-  print_endline "    Wordle 2.0 ( i ) ( l ) ( h ) ( r ) ( q )";
+  print_endline "Wordle 2.0 ( i ) ( l ) ( h ) ( r ) ( q )";
   make_grid dif letters guesses;
   make_keyboard guesses
 
