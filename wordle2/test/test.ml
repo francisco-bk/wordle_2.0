@@ -70,6 +70,13 @@ let pp_list pp_elt lst =
   in
   "[" ^ pp_elts lst ^ "]"
 
+(** [pp_tup x] pretty-prints x [(string*int)] *)
+let rec pp_tup x =
+  match x with
+  | [] -> ""
+  | [ x ] -> "(" ^ fst x ^ "," ^ Int.to_string (snd x) ^ ")"
+  | h :: t -> pp_tup [ h ] ^ pp_tup t
+
 let cmp_list lst1 lst2 =
   let uniq1 = List.sort compare lst1 in
   let uniq2 = List.sort compare lst2 in
@@ -129,9 +136,8 @@ let processor_tests =
       "aaaaa" true string_of_bool ( = );
     test "in_dict [] and 'aaaaa'" (in_dict []) "aaaaa" false
       string_of_bool ( = );
-    test "in_dict ['aaaaa'] and 'aaaaa'"
-      (in_dict [ "aaaaa" ])
-      "aaaaa" true string_of_bool ( = );
+    test "in_dict ['aaaaa'] and 'aaaaa'" (in_dict [ "aaaaa" ]) "aaaaa"
+      true string_of_bool ( = );
     (* Testing color_list *)
     test "color_list 'llama' and 'lamal'" (color_list "llama") "lamal"
       [ 2; 1; 1; 1; 1 ] (pp_list Int.to_string) ( = );
@@ -257,6 +263,249 @@ let processor_tests =
       [ 2; 2; 0; 2 ] (pp_list Int.to_string) ( = );
     test "colorize_guess 'soind' and 'sdima'" (color_list "soind")
       "sdima" [ 2; 1; 2; 0; 0 ] (pp_list Int.to_string) ( = );
+    (* Testing colorize_guess *)
+    test "colorize_guess 2 letters: 'hi' and 'he'" (colorize_guess "hi")
+      "he"
+      [ ("h", 2); ("e", 0) ]
+      pp_tup ( = );
+    test "colorize_guess 2 letters: 'he' and 'he'" (colorize_guess "he")
+      "he"
+      [ ("h", 2); ("e", 2) ]
+      pp_tup ( = );
+    test "colorize_guess 3 letters: 'ink' and 'aid'"
+      (colorize_guess "ink") "aid"
+      [ ("a", 0); ("i", 1); ("d", 0) ]
+      pp_tup ( = );
+    test "colorize_guess 3 letters: 'tag' and 'urn'"
+      (colorize_guess "tag") "urn"
+      [ ("u", 0); ("r", 0); ("n", 0) ]
+      pp_tup ( = );
+    test "colorize_guess 3 letters: 'ink' and 'ink'"
+      (colorize_guess "ink") "ink"
+      [ ("i", 2); ("n", 2); ("k", 2) ]
+      pp_tup ( = );
+    test "colorize_guess 4 letters: 'tree' and 'race'"
+      (colorize_guess "tree") "race"
+      [ ("r", 1); ("a", 0); ("c", 0); ("e", 2) ]
+      pp_tup ( = );
+    test "colorize_guess 4 letters: 'race' and 'race'"
+      (colorize_guess "race") "race"
+      [ ("r", 2); ("a", 2); ("c", 2); ("e", 2) ]
+      pp_tup ( = );
+    test "colorize_guess 5 letters: 'hello' and 'hello'"
+      (colorize_guess "hello")
+      "hello"
+      [ ("h", 2); ("e", 2); ("l", 2); ("l", 2); ("o", 2) ]
+      pp_tup ( = );
+    test "colorize_guess 5 letters: 'hello' and 'hella'"
+      (colorize_guess "hello")
+      "hella"
+      [ ("h", 2); ("e", 2); ("l", 2); ("l", 2); ("a", 0) ]
+      pp_tup ( = );
+    test "colorize_guess 5 letters: 'hello' and 'fuzzy'"
+      (colorize_guess "hello")
+      "fuzzy"
+      [ ("f", 0); ("u", 0); ("z", 0); ("z", 0); ("y", 0) ]
+      pp_tup ( = );
+    test "colorize_guess 5 letters: 'hello' and 'pozzy'"
+      (colorize_guess "hello")
+      "pozzy"
+      [ ("p", 0); ("o", 1); ("z", 0); ("z", 0); ("y", 0) ]
+      pp_tup ( = );
+    test "colorize_guess 5 letters: 'dizzy' and 'bezzy'"
+      (colorize_guess "dizzy")
+      "bezzy"
+      [ ("b", 0); ("e", 0); ("z", 2); ("z", 2); ("y", 2) ]
+      pp_tup ( = );
+    test "colorize_guess 6 letters: 'abroad' and 'abroad'"
+      (colorize_guess "abroad")
+      "abroad"
+      [ ("a", 2); ("b", 2); ("r", 2); ("o", 2); ("a", 2); ("d", 2) ]
+      pp_tup ( = );
+    test "colorize_guess 6 letters: 'accept' and 'abroad'"
+      (colorize_guess "accept")
+      "abroad"
+      [ ("a", 2); ("b", 0); ("r", 0); ("o", 0); ("a", 0); ("d", 0) ]
+      pp_tup ( = );
+    test "colorize_guess 6 letters: 'actual' and 'abroad'"
+      (colorize_guess "actual")
+      "abroad"
+      [ ("a", 2); ("b", 0); ("r", 0); ("o", 0); ("a", 2); ("d", 0) ]
+      pp_tup ( = );
+    test "colorize_guess 7 letters: 'fuzzbox' and 'fuzzbox'"
+      (colorize_guess "fuzzbox")
+      "fuzzbox"
+      [
+        ("f", 2);
+        ("u", 2);
+        ("z", 2);
+        ("z", 2);
+        ("b", 2);
+        ("o", 2);
+        ("x", 2);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 7 letters: 'buzzing' and 'fuzzbox'"
+      (colorize_guess "buzzing")
+      "fuzzbox"
+      [
+        ("f", 0);
+        ("u", 2);
+        ("z", 2);
+        ("z", 2);
+        ("b", 1);
+        ("o", 0);
+        ("x", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 7 letters: 'wazzock' and 'fuzzbox'"
+      (colorize_guess "wazzock")
+      "fuzzbox"
+      [
+        ("f", 0);
+        ("u", 0);
+        ("z", 2);
+        ("z", 2);
+        ("b", 0);
+        ("o", 1);
+        ("x", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 8 letters: 'absolute' and 'absolute'"
+      (colorize_guess "absolute")
+      "absolute"
+      [
+        ("a", 2);
+        ("b", 2);
+        ("s", 2);
+        ("o", 2);
+        ("l", 2);
+        ("u", 2);
+        ("t", 2);
+        ("e", 2);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 8 letters: 'abstract' and 'absolute'"
+      (colorize_guess "abstract")
+      "absolute"
+      [
+        ("a", 2);
+        ("b", 2);
+        ("s", 2);
+        ("o", 0);
+        ("l", 0);
+        ("u", 0);
+        ("t", 1);
+        ("e", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 8 letters:  'complain' and 'absolute'"
+      (colorize_guess "complain")
+      "absolute"
+      [
+        ("a", 1);
+        ("b", 0);
+        ("s", 0);
+        ("o", 1);
+        ("l", 2);
+        ("u", 0);
+        ("t", 0);
+        ("e", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 9 letters: 'babbitted' and 'babbitted'"
+      (colorize_guess "babbitted")
+      "babbitted"
+      [
+        ("b", 2);
+        ("a", 2);
+        ("b", 2);
+        ("b", 2);
+        ("i", 2);
+        ("t", 2);
+        ("t", 2);
+        ("e", 2);
+        ("d", 2);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 9 letters: 'babbitted' and 'babbittry'"
+      (colorize_guess "babbitted")
+      "babbittry"
+      [
+        ("b", 2);
+        ("a", 2);
+        ("b", 2);
+        ("b", 2);
+        ("i", 2);
+        ("t", 2);
+        ("t", 2);
+        ("r", 0);
+        ("y", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 9 letters: 'jipijapas' and 'paparazzi'"
+      (colorize_guess "jipijapas")
+      "paparazzi"
+      [
+        ("p", 1);
+        ("a", 1);
+        ("p", 2);
+        ("a", 0);
+        ("r", 0);
+        ("a", 2);
+        ("z", 0);
+        ("z", 0);
+        ("i", 1);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'freindship' and 'buzzworthy'"
+      (colorize_guess "freindship")
+      "buzzworthy"
+      [
+        ("b", 0);
+        ("u", 0);
+        ("z", 0);
+        ("z", 0);
+        ("w", 0);
+        ("o", 0);
+        ("r", 1);
+        ("t", 0);
+        ("h", 1);
+        ("y", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'quizzified' and 'quizzifies'"
+      (colorize_guess "quizzified")
+      "quizzifies"
+      [
+        ("q", 2);
+        ("u", 2);
+        ("i", 2);
+        ("z", 2);
+        ("z", 2);
+        ("i", 2);
+        ("f", 2);
+        ("i", 2);
+        ("e", 2);
+        ("s", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'blizzarded' and 'bedazzling'"
+      (colorize_guess "blizzarded")
+      "bedazzling"
+      [
+        ("b", 2);
+        ("e", 1);
+        ("d", 1);
+        ("a", 1);
+        ("z", 2);
+        ("z", 1);
+        ("l", 1);
+        ("i", 1);
+        ("n", 0);
+        ("g", 0);
+      ]
+      pp_tup ( = );
   ]
 
 (*****************************************************************)
