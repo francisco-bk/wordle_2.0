@@ -522,54 +522,54 @@ let format_tests' =
   [
     format_test
       "format test with two pairs, order is random and values are \
-       representative"
+       representative1"
       [ "a "; "1"; "b "; "2" ]
-      "a ,1;b ,2;";
+      "b ,2;a ,1;";
     format_test
       "format test with two pairs, order is random and values are \
-       representative"
-      [ "a "; "100"; "b "; "200" ]
-      "a ,100;b ,200;";
+       representative2"
+      [ "a "; "300"; "b "; "200" ]
+      "b ,200;a ,300;";
     format_test
       "format test with two pairs, order is random and values are \
-       representative"
+       representative3"
       [ "ab "; "1"; "ab "; "2" ]
-      "aa ,1;ab ,2;";
+      "ab ,2;ab ,1;";
     format_test
       "format test with two pairs, order is random and values are \
-       representative"
-      [ "ab "; "1"; "ba "; "2" ]
-      "ab ,1;ba ,2;";
+       representative4"
+      [ "ab "; "2"; "ba "; "1" ]
+      "ba ,1;ab ,2;";
     format_test
       "format test with two pairs, order is random and values are \
-       representative"
+       representative5"
       [ "a "; "2"; "b "; "2" ]
-      "a ,2;b ,2;";
+      "b ,2;a ,2;";
     format_test
       "format test with two pairs, order is random and values are \
-       representative"
+       representative6"
       [ "a "; "-1"; "b "; "20" ]
-      "a ,-1;b ,20;";
+      "b ,20;a ,-1;";
     format_test
       "format test with two pairs, order is random and values are \
-       representative"
+       representative7"
       [ "aaaa "; "1"; "aaaaa "; "2" ]
-      "aaaa ,1;aaaaa ,2;";
+      "aaaaa ,2;aaaa ,1;";
     format_test
       "format test with two pairs, order is random and values are \
-       representative"
+       representative8"
       [ "a3a "; "1"; "a3a "; "2" ]
-      "a3a ,1;a3a ,2;";
+      "a3a ,2;a3a ,1;";
     format_test
       "format test with two pairs, order is random and values are \
-       representative"
+       representative9"
       [ "a "; "1000"; "b "; "2000" ]
-      "a ,1000;b ,2000;";
+      "b ,2000;a ,1000;";
     format_test
       "format test with two pairs, order is random and values are \
-       representative"
+       representative10"
       [ "a "; "-1"; "b "; "-2" ]
-      "a ,-1;b ,-2;";
+      "b ,-2;a ,-1;";
   ]
 
 let leaderboard_tests =
