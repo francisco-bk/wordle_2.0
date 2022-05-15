@@ -42,7 +42,7 @@ val grey_letters : t -> string list
 (** [grey_letters e] is [e]'s known grey letters. *)
 
 val yellow_letters : t -> string list
-(** [correct_word e] is [e]'s known yellow letters. *)
+(** [yellow_letters e] is [e]'s known yellow letters. *)
 
 val green_letters : t -> string list
-(** [correct_word e] is [e]'s known green letters. *)
+(** [green_letters e] is [e]'s known green letters. *)

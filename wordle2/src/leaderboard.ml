@@ -1,5 +1,3 @@
-(* The functions in the file implement the leaderboard feature*)
-
 let get_board (length : int) : in_channel =
   open_in ("wordle2/data/leaderboard" ^ string_of_int length ^ ".txt")
 
@@ -38,10 +36,11 @@ let format lst : string =
       fst x ^ "" ^ "," ^ string_of_int (snd x) ^ ";" ^ init)
     "" new_lst
 
-let write (length : int) (msg : string) =
+let write (difficulty : int) (msg : string) =
   (* Write message to file *)
   let oc =
-    open_out ("wordle2/data/leaderboard" ^ string_of_int length ^ ".txt")
+    open_out
+      ("wordle2/data/leaderboard" ^ string_of_int difficulty ^ ".txt")
   in
   (* create or truncate file, return channel *)
   Printf.fprintf oc "%s" msg;

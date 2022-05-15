@@ -1,6 +1,3 @@
-(* The functions in this file loads the target dictionary from the data
-   file, and assembles it into an ocaml format *)
-
 let parse_dict (dict : string list) : string list =
   List.map (fun x -> String.trim x) dict
 

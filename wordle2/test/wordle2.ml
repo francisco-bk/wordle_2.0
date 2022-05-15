@@ -122,8 +122,9 @@ let processor_tests =
       "aaaaa" true string_of_bool ( = );
     test "in_dict [] and 'aaaaa'" (in_dict []) "aaaaa" false
       string_of_bool ( = );
-    test "in_dict ['aaaaa'] and 'aaaaa'" (in_dict [ "aaaaa" ]) "aaaaa"
-      true string_of_bool ( = );
+    test "in_dict ['aaaaa'] and 'aaaaa'"
+      (in_dict [ "aaaaa" ])
+      "aaaaa" true string_of_bool ( = );
     (* Testing color_list *)
     test "color_list 'llama' and 'lamal'" (color_list "llama") "lamal"
       [ 2; 1; 1; 1; 1 ] (pp_list Int.to_string) ( = );

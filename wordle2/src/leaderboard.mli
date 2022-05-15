@@ -1,20 +1,25 @@
+(** Handles the leaderboard feature of the game. *)
+
 val get_board : int -> in_channel
-(*[get_leader] loads the leaderboard*)
+(** [get_board difficulty] loads the leaderboard associated with
+    [difficulty]. *)
 
 val check_board : 'a list -> bool
-(*[check_board] returns a bool depending on whether the leaderboard is
-  empty*)
+(** [check_board board] returns [true] if the [board] is nonempty and
+    [false] otherwise. *)
 
 val write : int -> string -> unit
-(*[write] writes to the leaderboard txt files*)
+(** [write difficulty msg] writes [msg] to the end of the leaderboard
+    data file associated with [difficulty]. *)
 
 val board_lst : in_channel -> string list
-(*[board_lst] returns a list that contains all player/score pairs*)
+(** [board_lst file] returns a list that contains all player/score pairs
+    contained in [file]. *)
 
 val pick_first_five : string list -> (string * int) list
-(*[pick_first_five] returns a list that only contains the highest 5
-  player/score pairs *)
+(** [pick_first_five board] returns a list that contains the highest
+    five player/score pairs in [board] *)
 
 val format : string list -> string
-(*[format] formats the output of [board_lst] into "name ,score;" so it
-  can be written to the txt files.*)
+(** [format board] formats the output of [board] into a repeating string
+    with syntax "name,score;"*)
