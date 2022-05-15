@@ -135,7 +135,7 @@ let rec make_grid row column (guesses : (string * int) list list) : unit
     [g] guesses representing the guesses so far. Precondition : length
     of guesses is smaller then dif*)
 let make_game dif letters guesses : unit =
-  print_endline "    Wordle 2.0 ( i ) ( l ) ( h ) ( r )";
+  print_endline "    Wordle 2.0 ( i ) ( l ) ( h ) ( r ) ( q )";
   make_grid dif letters guesses;
   make_keyboard guesses
 
@@ -153,7 +153,7 @@ let rec print_word colored_word =
     dict*)
 let in_check str : bool =
   in_dict !dict str && str != "i" && str != "l" && str != "h"
-  && str != "r"
+  && str != "r" && str != "q"
 
 let print_hint_engine guess =
   let colored_guess = Processor.colorize_guess !correct_word guess in
@@ -460,6 +460,7 @@ and restart dif letters =
     play that is not a valid word*)
 and command_choice dif letters guesses input =
   if input = "r" then restart dif letters
+  else if input = "q" then print_endline thank_you_message
   else if input = "i" || input = "l" || input = "h" then (
     igCommand input;
     play guesses dif letters)
