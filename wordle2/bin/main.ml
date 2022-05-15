@@ -9,7 +9,7 @@ let dict : string list ref = ref []
 
 (** [dict_f length] returns a string list of all words based on the user-input
     [length] *)
-let dict_f (l:int): string list = l |> load |> dict_lst
+let dict_f (l : int): string list = l |> load |> dict_lst
 
 (*[name] is the name of entered by the current player*)
 let name :string ref= ref ""
