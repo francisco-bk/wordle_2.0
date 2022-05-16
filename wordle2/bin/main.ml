@@ -476,7 +476,9 @@ and match_restart_quit i =
   | "q" -> print_endline thank_you_message
   | _ ->
       print_endline "Invalid input try again";
-      match_restart_quit i
+      print_endline
+        "Would you like to restart the game (r) or quit (q) >  ";
+      match_restart_quit (read_line ())
 
 and end_screen guesses win () =
   let final_score =
