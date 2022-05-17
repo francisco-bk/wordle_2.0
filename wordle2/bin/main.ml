@@ -201,18 +201,6 @@ let print_leaderboard () : unit =
         ^ string_of_int (snd (List.nth lst 4)))
     else ()
 
-(* * [end_screen ()] represents the state after the game ends. *)
-(* let end_screen guesses win () = let final_score = score (List.length
-   guesses + 1) !length !penalties in if win then ( Leaderboard.write
-   !length ((get_board !length |> board_lst |> format) ^ !name ^ " ," ^
-   final_score ^ ";"); print_endline "\nCongratulations! You have
-   guessed the correct word!"; print_endline ("Score: " ^ final_score);
-   print_endline ""; leaderboard := get_board !length |> board_lst |>
-   pick_first_five; print_leaderboard ()) else ( print_endline "\nYou
-   didn't guess the word :("; print_endline ("The word was: " ^
-   !correct_word); leaderboard := get_board !length |> board_lst |>
-   pick_first_five; print_leaderboard ()) *)
-
 let start_logo =
   "\n\
   \  \
@@ -323,27 +311,31 @@ let print_hint hint =
 let rec prompt_hint () =
   print_endline hint;
   match read_line () with
-  | "grey" -> (
-      match HintEngine.get_hint 0 !hint_engine with
-      | Some hint, new_hist ->
-          print_hint hint;
-          hint_engine := new_hist;
-          penalties := !penalties + 1
-      | None, _ ->
-          print_endline "There are no more grey letters!";
-          prompt_hint ())
-  | "yellow" -> (
-      match HintEngine.get_hint 1 !hint_engine with
-      | Some hint, new_hist ->
-          print_hint hint;
-          hint_engine := new_hist;
-          penalties := !penalties + 1
-      | None, _ ->
-          print_endline "There are no more yellow letters!";
-          prompt_hint ())
+  | "grey" -> get_grey_hint ()
+  | "yellow" -> get_yellow_hint ()
   | "cancel" -> ()
   | _ ->
       print_endline "Your input is invalid.";
+      prompt_hint ()
+
+and get_grey_hint () =
+  match HintEngine.get_hint 0 !hint_engine with
+  | Some hint, new_hist ->
+      print_hint hint;
+      hint_engine := new_hist;
+      penalties := !penalties + 1
+  | None, _ ->
+      print_endline "There are no more grey letters!";
+      prompt_hint ()
+
+and get_yellow_hint () =
+  match HintEngine.get_hint 1 !hint_engine with
+  | Some hint, new_hist ->
+      print_hint hint;
+      hint_engine := new_hist;
+      penalties := !penalties + 1
+  | None, _ ->
+      print_endline "There are no more yellow letters!";
       prompt_hint ()
 
 let igCommand inp =
@@ -367,6 +359,9 @@ let rec choose_name () =
       || (Char.code c >= 48 && Char.code c <= 57)
       || Char.code c = 95
   in
+  process_name name' valid v
+
+and process_name name' valid v =
   if String.length name' > 10 then (
     print_endline
       "Please enter a name that's no longer than 10 characters.";
@@ -479,6 +474,8 @@ and match_restart_quit i =
         "Would you like to restart the game (r) or quit (q) >  ";
       match_restart_quit (read_line ())
 
+(** [end_screen guesses win ()] represents the state [win] after the
+    game ends. *)
 and end_screen guesses win () =
   let final_score =
     score (List.length guesses + 1) !length !penalties
