@@ -1,12 +1,11 @@
 Directions for installation:
 
-1) Package installation. We assume you have OPAM installed. In terminal, execute
-the following:
+1) Dowload required packages. We assume you have OPAM installed. We will create
+a new OPAM switch for this game. In terminal, execute the following:
 1a) Run "opam switch create wordle ocaml-base-compiler.4.12.0"
 1b) Run "opam switch wordle"
 1c) Run "opam install -y utop odoc ounit2 qcheck bisect_ppx menhir ocaml-lsp-server ocamlformat ocamlformat-rpc ANSITerminal dune"
 
-3) Type "dune build". Ignore the warnings, they do not break the program.
-This is a WIP after all!
+3) Type "dune build".
 
 4) Type "make play". Enjoy the game!
