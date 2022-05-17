@@ -362,12 +362,10 @@ let rec choose_name () =
   let name' = read_line () in
   let v = ref true in
   let valid c : unit =
-    if
+    v :=
       (Char.code c >= 97 && Char.code c <= 122)
       || (Char.code c >= 48 && Char.code c <= 57)
       || Char.code c = 95
-    then v := true
-    else v := false
   in
   if String.length name' > 10 then (
     print_endline
@@ -484,29 +482,31 @@ and end_screen guesses win () =
   let final_score =
     score (List.length guesses + 1) !length !penalties
   in
-  if win then (
-    Leaderboard.write !length
-      ((get_board !length |> board_lst |> format)
-      ^ !name ^ " ," ^ final_score ^ ";");
-    print_endline
-      "\nCongratulations! You have guessed the correct word!";
-    print_endline ("Score: " ^ final_score);
-    print_endline "";
-    leaderboard := get_board !length |> board_lst |> pick_first_five;
-    print_leaderboard ();
-    print_endline
-      "\nWould you like to restart the game (r) or  quit (q) >  ";
-    let i = read_line () in
-    match_restart_quit i)
-  else (
-    print_endline "\nYou didn't guess the word :(";
-    print_endline ("The word was: " ^ !correct_word);
-    leaderboard := get_board !length |> board_lst |> pick_first_five;
-    print_leaderboard ();
-    print_endline
-      "\nWould you like to restart the game (r) or quit (q) >  ";
-    let i = read_line () in
-    match_restart_quit i)
+  if win then win_screen final_score () else lose_screen ()
+
+and win_screen final_score () =
+  Leaderboard.write !length
+    ((get_board !length |> board_lst |> format)
+    ^ !name ^ " ," ^ final_score ^ ";");
+  print_endline "\nCongratulations! You have guessed the correct word!";
+  print_endline ("Score: " ^ final_score);
+  print_endline "";
+  leaderboard := get_board !length |> board_lst |> pick_first_five;
+  print_leaderboard ();
+  print_endline
+    "\nWould you like to restart the game (r) or  quit (q) >  ";
+  let i = read_line () in
+  match_restart_quit i
+
+and lose_screen () =
+  print_endline "\nYou didn't guess the word :(";
+  print_endline ("The word was: " ^ !correct_word);
+  leaderboard := get_board !length |> board_lst |> pick_first_five;
+  print_leaderboard ();
+  print_endline
+    "\nWould you like to restart the game (r) or quit (q) >  ";
+  let i = read_line () in
+  match_restart_quit i
 
 (** [start ()] represents the pre-game state. *)
 let start () =
