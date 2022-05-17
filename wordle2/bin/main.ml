@@ -165,6 +165,14 @@ let rec lst_to_string input =
   | (a, b) :: t ->
       "(" ^ a ^ " : " ^ string_of_int b ^ "); " ^ lst_to_string t
 
+let lb_length length lst n =
+  if length >= n then
+    print_endline
+      (fst (List.nth lst (n - 1))
+      ^ "   "
+      ^ string_of_int (snd (List.nth lst (n - 1))))
+  else ()
+
 let print_leaderboard () : unit =
   let length = List.length !leaderboard in
   if length = 0 then
@@ -176,30 +184,10 @@ let print_leaderboard () : unit =
       (fst (List.nth lst 0)
       ^ "   "
       ^ string_of_int (snd (List.nth lst 0)));
-    if length >= 2 then
-      print_endline
-        (fst (List.nth lst 1)
-        ^ "   "
-        ^ string_of_int (snd (List.nth lst 1)))
-    else ();
-    if length >= 3 then
-      print_endline
-        (fst (List.nth lst 2)
-        ^ "   "
-        ^ string_of_int (snd (List.nth lst 2)))
-    else ();
-    if length >= 4 then
-      print_endline
-        (fst (List.nth lst 3)
-        ^ "   "
-        ^ string_of_int (snd (List.nth lst 3)))
-    else ();
-    if length >= 5 then
-      print_endline
-        (fst (List.nth lst 4)
-        ^ "   "
-        ^ string_of_int (snd (List.nth lst 4)))
-    else ()
+    lb_length length lst 2;
+    lb_length length lst 3;
+    lb_length length lst 4;
+    lb_length length lst 5
 
 let start_logo =
   "\n\
