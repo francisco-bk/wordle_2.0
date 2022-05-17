@@ -136,9 +136,8 @@ let processor_tests =
       "aaaaa" true string_of_bool ( = );
     test "in_dict [] and 'aaaaa'" (in_dict []) "aaaaa" false
       string_of_bool ( = );
-    test "in_dict ['aaaaa'] and 'aaaaa'"
-      (in_dict [ "aaaaa" ])
-      "aaaaa" true string_of_bool ( = );
+    test "in_dict ['aaaaa'] and 'aaaaa'" (in_dict [ "aaaaa" ]) "aaaaa"
+      true string_of_bool ( = );
     (* Testing color_list *)
     test "color_list 'llama' and 'lamal'" (color_list "llama") "lamal"
       [ 2; 1; 1; 1; 1 ] (pp_list Int.to_string) ( = );
@@ -505,6 +504,118 @@ let processor_tests =
         ("i", 1);
         ("n", 0);
         ("g", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'bedazzling' and 'blizzarded'"
+      (colorize_guess "bedazzling")
+      "blizzarded"
+      [
+        ("b", 2);
+        ("l", 1);
+        ("i", 1);
+        ("z", 1);
+        ("z", 2);
+        ("a", 1);
+        ("r", 0);
+        ("d", 1);
+        ("e", 1);
+        ("d", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'shemozzled' and 'blizzarded'"
+      (colorize_guess "shemozzled")
+      "blizzarded"
+      [
+        ("b", 0);
+        ("l", 1);
+        ("i", 0);
+        ("z", 1);
+        ("z", 1);
+        ("a", 0);
+        ("r", 0);
+        ("d", 0);
+        ("e", 2);
+        ("d", 2);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'pizzicatos' and 'blizzarded'"
+      (colorize_guess "pizzicatos")
+      "blizzarded"
+      [
+        ("b", 0);
+        ("l", 0);
+        ("i", 1);
+        ("z", 2);
+        ("z", 1);
+        ("a", 1);
+        ("r", 0);
+        ("d", 0);
+        ("e", 0);
+        ("d", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'schizziest' and 'blizzarded'"
+      (colorize_guess "schizziest")
+      "blizzarded"
+      [
+        ("b", 0);
+        ("l", 0);
+        ("i", 1);
+        ("z", 1);
+        ("z", 2);
+        ("a", 0);
+        ("r", 0);
+        ("d", 0);
+        ("e", 1);
+        ("d", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'aaaaaaaaaa' and 'blizzarded'"
+      (colorize_guess "aaaaaaaaaa")
+      "blizzarded"
+      [
+        ("b", 0);
+        ("l", 0);
+        ("i", 0);
+        ("z", 0);
+        ("z", 0);
+        ("a", 2);
+        ("r", 0);
+        ("d", 0);
+        ("e", 0);
+        ("d", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'zzzzzzzzzz' and 'blizzarded'"
+      (colorize_guess "zzzzzzzzzz")
+      "blizzarded"
+      [
+        ("b", 0);
+        ("l", 0);
+        ("i", 0);
+        ("z", 2);
+        ("z", 2);
+        ("a", 0);
+        ("r", 0);
+        ("d", 0);
+        ("e", 0);
+        ("d", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'dedrazzilb' and 'blizzarded'"
+      (colorize_guess "dedrazzilb")
+      "blizzarded"
+      [
+        ("b", 1);
+        ("l", 1);
+        ("i", 1);
+        ("z", 1);
+        ("z", 1);
+        ("a", 1);
+        ("r", 1);
+        ("d", 1);
+        ("e", 1);
+        ("d", 1);
       ]
       pp_tup ( = );
   ]
