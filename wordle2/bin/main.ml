@@ -11,7 +11,7 @@ let dict : string list ref = ref []
     user-input [length] *)
 let dict_f (l : int) : string list = l |> load |> dict_lst
 
-(*[name] is the name of entered by the current player*)
+(** [name] is the name of entered by the current player*)
 let name : string ref = ref ""
 
 (** [correct_word] initializes itself to an empty string as a mutable
