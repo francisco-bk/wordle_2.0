@@ -436,15 +436,16 @@ let rec play (guesses : (string * int) list list) dif letters =
         end_screen guesses true ()
     | false ->
         hint_engine := HintEngine.add_guess !hint_engine input;
-        if List.length guesses + 1 = dif then (
-          make_game dif letters
-            (guesses @ [ colorize_guess !correct_word input ]);
-          end_screen guesses false ())
-        else
-          play
-            (guesses @ [ colorize_guess !correct_word input ])
-            dif letters)
+        false_output guesses dif letters input)
   else command_choice dif letters guesses input
+
+and false_output guesses dif letters input =
+  if List.length guesses + 1 = dif then (
+    make_game dif letters
+      (guesses @ [ colorize_guess !correct_word input ]);
+    end_screen guesses false ())
+  else
+    play (guesses @ [ colorize_guess !correct_word input ]) dif letters
 
 and restart dif letters =
   ANSITerminal.print_string
