@@ -174,6 +174,7 @@ let lb_length length lst n =
   else ()
 
 let print_leaderboard () : unit =
+  leaderboard := get_board !length |> board_lst |> pick_first_five;
   let length = List.length !leaderboard in
   if length = 0 then
     print_endline "Win more games to fill up the leaderboard!"
@@ -321,7 +322,7 @@ and get_yellow_hint () =
   | Some hint, new_hist ->
       print_hint hint;
       hint_engine := new_hist;
-      penalties := !penalties + 1
+      penalties := !penalties + 2
   | None, _ ->
       print_endline "There are no more yellow letters!";
       prompt_hint ()
@@ -477,7 +478,6 @@ and win_screen final_score () =
   print_endline "\nCongratulations! You have guessed the correct word!";
   print_endline ("Score: " ^ final_score);
   print_endline "";
-  leaderboard := get_board !length |> board_lst |> pick_first_five;
   print_leaderboard ();
   print_endline
     "\nWould you like to restart the game (r) or  quit (q) >  ";
@@ -487,7 +487,6 @@ and win_screen final_score () =
 and lose_screen () =
   print_endline "\nYou didn't guess the word :(";
   print_endline ("The word was: " ^ !correct_word);
-  leaderboard := get_board !length |> board_lst |> pick_first_five;
   print_leaderboard ();
   print_endline
     "\nWould you like to restart the game (r) or quit (q) >  ";
