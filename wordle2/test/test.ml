@@ -618,6 +618,102 @@ let processor_tests =
         ("d", 1);
       ]
       pp_tup ( = );
+    test "colorize_guess 10 letters: 'zzzzzzzzza' and 'zzzzzzzzzz'"
+      (colorize_guess "zzzzzzzzza")
+      "zzzzzzzzzz"
+      [
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'azzzzzzzzz' and 'zzzzzzzzzz'"
+      (colorize_guess "azzzzzzzza")
+      "zzzzzzzzzz"
+      [
+        ("z", 0);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'zzzzazzzzz' and 'zzzzzzzzzz'"
+      (colorize_guess "zzzzazzzzz")
+      "zzzzzzzzzz"
+      [
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 0);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'zzzzzzzzzz' and 'zzzzzzzzza'"
+      (colorize_guess "zzzzzzzzzz")
+      "zzzzzzzzza"
+      [
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("z", 2);
+        ("a", 0);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'abcdefghhh' and 'hhhabcdefg'"
+      (colorize_guess "abcdefghhh")
+      "hhhabcdefg"
+      [
+        ("h", 1);
+        ("h", 1);
+        ("h", 1);
+        ("a", 1);
+        ("b", 1);
+        ("c", 1);
+        ("d", 1);
+        ("e", 1);
+        ("f", 1);
+        ("g", 1);
+      ]
+      pp_tup ( = );
+    test "colorize_guess 10 letters: 'hbafedgchh' and 'hhhabcdefg'"
+      (colorize_guess "hbafedgchh")
+      "hhhabcdefg"
+      [
+        ("h", 2);
+        ("h", 1);
+        ("h", 1);
+        ("a", 1);
+        ("b", 1);
+        ("c", 1);
+        ("d", 1);
+        ("e", 1);
+        ("f", 1);
+        ("g", 1);
+      ]
+      pp_tup ( = );
   ]
 
 (*****************************************************************)
